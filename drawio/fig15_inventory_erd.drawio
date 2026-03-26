@@ -1,0 +1,265 @@
+<mxfile host="draw.io" type="device">
+  <diagram id="fig15" name="Fig 15 — Inventory Conceptual Model">
+    <mxGraphModel dx="900" dy="680" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="680" math="0" shadow="0" background="#FFFFFF">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title -->
+        <mxCell id="title" value="Certificate Inventory Conceptual Model" style="text;fontFamily=Helvetica Neue;fontStyle=1;fontSize=16;fontColor=#1D1D1F;align=center;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="15" width="460" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="subtitle" value="Five-list relational model — custody-safe (metadata only, no private keys)" style="text;fontFamily=Helvetica Neue;fontSize=11;fontColor=#86868B;align=center;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="42" width="500" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ ENDPOINT (top center) ═══ -->
+        <mxCell id="ent_ep" value="" style="rounded=1;arcSize=12;shadow=1;shadowColor=#00000020;shadowOffsetX=0;shadowOffsetY=2;fillColor=#E5F2FF;strokeColor=#007AFF;strokeWidth=1.5;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="310" y="75" width="280" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="ep_hdr" value="Endpoint" style="text;fontFamily=Helvetica Neue;fontStyle=1;fontSize=13;fontColor=#007AFF;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="326" y="82" width="200" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="ep_line" value="" style="line;strokeColor=#007AFF;strokeWidth=0.5;html=1;" vertex="1" parent="1">
+          <mxGeometry x="322" y="104" width="256" height="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ep_f1" value="&lt;font color=&quot;#636366&quot;&gt;endpoint_fqdn&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;String — SNI value&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;fontColor=#1D1D1F;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="326" y="108" width="252" height="18" as="geometry"/>
+        </mxCell>
+        <mxCell id="ep_f2" value="&lt;font color=&quot;#636366&quot;&gt;environment&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;Enum — prod | nonprod | test&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;fontColor=#1D1D1F;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="326" y="126" width="252" height="18" as="geometry"/>
+        </mxCell>
+        <mxCell id="ep_f3" value="&lt;font color=&quot;#636366&quot;&gt;service_name&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;String — product/API name&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;fontColor=#1D1D1F;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="326" y="144" width="252" height="18" as="geometry"/>
+        </mxCell>
+        <mxCell id="ep_f4" value="&lt;font color=&quot;#636366&quot;&gt;owner_team&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;String — accountable team&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;fontColor=#1D1D1F;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="326" y="162" width="252" height="18" as="geometry"/>
+        </mxCell>
+        <mxCell id="ep_f5" value="&lt;font color=&quot;#636366&quot;&gt;owner_verified_date&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;DateTime&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;fontColor=#1D1D1F;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="326" y="180" width="252" height="18" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ CERTIFICATE RECORD (center) ═══ -->
+        <mxCell id="ent_cr" value="" style="rounded=1;arcSize=10;shadow=1;shadowColor=#00000020;shadowOffsetX=0;shadowOffsetY=2;fillColor=#E8F9ED;strokeColor=#34C759;strokeWidth=1.5;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="30" y="260" width="280" height="310" as="geometry"/>
+        </mxCell>
+        <mxCell id="cr_hdr" value="CertificateRecord" style="text;fontFamily=Helvetica Neue;fontStyle=1;fontSize=13;fontColor=#34C759;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="46" y="267" width="200" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="cr_line" value="" style="line;strokeColor=#34C759;strokeWidth=0.5;html=1;" vertex="1" parent="1">
+          <mxGeometry x="42" y="289" width="256" height="1" as="geometry"/>
+        </mxCell>
+        <!-- Core fields -->
+        <mxCell id="cr_sec1" value="&lt;font color=&quot;#34C759&quot;&gt;Core&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontStyle=1;fontSize=9;fontColor=#34C759;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="46" y="293" width="100" height="14" as="geometry"/>
+        </mxCell>
+        <mxCell id="cr_f1" value="&lt;font color=&quot;#636366&quot;&gt;record_id&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;UUID&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="46" y="307" width="252" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="cr_f2" value="&lt;font color=&quot;#636366&quot;&gt;certificate_role&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;Enum&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="46" y="323" width="252" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="cr_f3" value="&lt;font color=&quot;#636366&quot;&gt;issuer_ca&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;String&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="46" y="339" width="252" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="cr_f4" value="&lt;font color=&quot;#636366&quot;&gt;valid_from / valid_to&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;DateTime&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="46" y="355" width="252" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="cr_f5" value="&lt;font color=&quot;#636366&quot;&gt;key_id / key_type / key_size&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;Key attrs&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="46" y="371" width="252" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="cr_f6" value="&lt;font color=&quot;#636366&quot;&gt;san_set[]&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;Array — SAN allowlist&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="46" y="387" width="252" height="16" as="geometry"/>
+        </mxCell>
+        <!-- Trust fields -->
+        <mxCell id="cr_line2" value="" style="line;strokeColor=#34C75940;strokeWidth=0.5;html=1;" vertex="1" parent="1">
+          <mxGeometry x="42" y="407" width="256" height="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="cr_sec2" value="&lt;font color=&quot;#34C759&quot;&gt;Trust and Governance&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontStyle=1;fontSize=9;fontColor=#34C759;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="46" y="410" width="160" height="14" as="geometry"/>
+        </mxCell>
+        <mxCell id="cr_f7" value="&lt;font color=&quot;#636366&quot;&gt;server_trust_profile_id&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;String (I8)&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="46" y="424" width="252" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="cr_f8" value="&lt;font color=&quot;#636366&quot;&gt;client_trust_bundle_id&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;String (I8)&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="46" y="440" width="252" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="cr_f9" value="&lt;font color=&quot;#636366&quot;&gt;assertion_contract_version&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;String (I9)&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="46" y="456" width="252" height="16" as="geometry"/>
+        </mxCell>
+        <!-- Domain fields -->
+        <mxCell id="cr_line3" value="" style="line;strokeColor=#34C75940;strokeWidth=0.5;html=1;" vertex="1" parent="1">
+          <mxGeometry x="42" y="476" width="256" height="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="cr_sec3" value="&lt;font color=&quot;#34C759&quot;&gt;Domain Control (Sec 7)&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontStyle=1;fontSize=9;fontColor=#34C759;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="46" y="479" width="160" height="14" as="geometry"/>
+        </mxCell>
+        <mxCell id="cr_f10" value="&lt;font color=&quot;#636366&quot;&gt;domain_owner / authorising_team&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="46" y="493" width="252" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="cr_f11" value="&lt;font color=&quot;#636366&quot;&gt;domain_phase&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;Enum — phase_1 | phase_2&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="46" y="509" width="252" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="cr_f12" value="&lt;font color=&quot;#636366&quot;&gt;domain_registration_expiry&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;DateTime&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="46" y="525" width="252" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="cr_f13" value="&lt;font color=&quot;#636366&quot;&gt;mtls_mode / review_date&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;Governance&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="46" y="541" width="252" height="16" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ DEPLOYMENT TARGET (bottom left) ═══ -->
+        <mxCell id="ent_dt" value="" style="rounded=1;arcSize=12;shadow=1;shadowColor=#00000020;shadowOffsetX=0;shadowOffsetY=2;fillColor=#EEEEFF;strokeColor=#5856D6;strokeWidth=1.5;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="30" y="600" width="280" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="dt_hdr" value="DeploymentTarget" style="text;fontFamily=Helvetica Neue;fontStyle=1;fontSize=13;fontColor=#5856D6;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="46" y="605" width="200" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="dt_line" value="" style="line;strokeColor=#5856D6;strokeWidth=0.5;html=1;" vertex="1" parent="1">
+          <mxGeometry x="42" y="627" width="256" height="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="dt_f1" value="&lt;font color=&quot;#636366&quot;&gt;deployment_targets[]&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;defender | origin | gateway&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="46" y="631" width="252" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="dt_f2" value="&lt;font color=&quot;#636366&quot;&gt;rollout_strategy&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;canary | blue-green | direct&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="46" y="649" width="252" height="16" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ CHANGE RECORD (right side) ═══ -->
+        <mxCell id="ent_chg" value="" style="rounded=1;arcSize=12;shadow=1;shadowColor=#00000020;shadowOffsetX=0;shadowOffsetY=2;fillColor=#FFF4E5;strokeColor=#FF9500;strokeWidth=1.5;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="590" y="260" width="280" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="chg_hdr" value="ChangeRecord" style="text;fontFamily=Helvetica Neue;fontStyle=1;fontSize=13;fontColor=#FF9500;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="606" y="267" width="200" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="chg_line" value="" style="line;strokeColor=#FF9500;strokeWidth=0.5;html=1;" vertex="1" parent="1">
+          <mxGeometry x="602" y="289" width="256" height="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="chg_f1" value="&lt;font color=&quot;#636366&quot;&gt;change_record&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;String — CRQ/ticket ID&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="606" y="293" width="252" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="chg_f2" value="&lt;font color=&quot;#636366&quot;&gt;rollback_ref&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;UUID — previous cert record&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="606" y="311" width="252" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="chg_f3" value="&lt;font color=&quot;#636366&quot;&gt;evidence_refs&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;Array — evidence pack links&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="606" y="329" width="252" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="chg_f4" value="&lt;font color=&quot;#636366&quot;&gt;telemetry_refs[]&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;Array — dashboard IDs&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="606" y="347" width="252" height="16" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ JUNCTION TABLE (center right) ═══ -->
+        <mxCell id="ent_junc" value="" style="rounded=1;arcSize=12;shadow=1;shadowColor=#00000020;shadowOffsetX=0;shadowOffsetY=2;fillColor=#F2F2F7;strokeColor=#C7C7CC;strokeWidth=1.5;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="395" y="430" width="260" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="junc_hdr" value="ChangeRecordCertificateLink" style="text;fontFamily=Helvetica Neue;fontStyle=1;fontSize=12;fontColor=#636366;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="411" y="435" width="232" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="junc_line" value="" style="line;strokeColor=#C7C7CC;strokeWidth=0.5;html=1;" vertex="1" parent="1">
+          <mxGeometry x="407" y="457" width="236" height="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="junc_f1" value="&lt;font color=&quot;#636366&quot;&gt;change_record_id&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;FK → ChangeRecord&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="411" y="461" width="232" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="junc_f2" value="&lt;font color=&quot;#636366&quot;&gt;record_id&lt;/font&gt;  &lt;font color=&quot;#86868B&quot;&gt;FK → CertificateRecord&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10.5;align=left;verticalAlign=middle;html=1;" vertex="1" parent="1">
+          <mxGeometry x="411" y="479" width="232" height="16" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ RELATIONSHIPS ═══ -->
+
+        <!-- Endpoint 1 ──→ 1..* CertificateRecord -->
+        <mxCell id="rel_ep_cr" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;strokeColor=#C7C7CC;strokeWidth=1.5;endArrow=blockThin;endSize=6;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;html=1;" edge="1" source="ent_ep" target="ent_cr" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel_ep_cr_1" value="&lt;font color=&quot;#86868B&quot; style=&quot;font-size:10px;&quot;&gt;1&lt;/font&gt;" style="edgeLabel;fontFamily=Helvetica Neue;html=1;" vertex="1" connectable="0" parent="rel_ep_cr">
+          <mxGeometry x="-0.8" relative="1" as="geometry">
+            <mxPoint x="-10" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_ep_cr_n" value="&lt;font color=&quot;#86868B&quot; style=&quot;font-size:10px;&quot;&gt;1..*&lt;/font&gt;" style="edgeLabel;fontFamily=Helvetica Neue;html=1;" vertex="1" connectable="0" parent="rel_ep_cr">
+          <mxGeometry x="0.8" relative="1" as="geometry">
+            <mxPoint x="-10" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- CertificateRecord 1 ──→ 1..* DeploymentTarget -->
+        <mxCell id="rel_cr_dt" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;strokeColor=#C7C7CC;strokeWidth=1.5;endArrow=blockThin;endSize=6;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;html=1;" edge="1" source="ent_cr" target="ent_dt" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel_cr_dt_1" value="&lt;font color=&quot;#86868B&quot; style=&quot;font-size:10px;&quot;&gt;1&lt;/font&gt;" style="edgeLabel;fontFamily=Helvetica Neue;html=1;" vertex="1" connectable="0" parent="rel_cr_dt">
+          <mxGeometry x="-0.8" relative="1" as="geometry">
+            <mxPoint x="-10" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_cr_dt_n" value="&lt;font color=&quot;#86868B&quot; style=&quot;font-size:10px;&quot;&gt;1..*&lt;/font&gt;" style="edgeLabel;fontFamily=Helvetica Neue;html=1;" vertex="1" connectable="0" parent="rel_cr_dt">
+          <mxGeometry x="0.8" relative="1" as="geometry">
+            <mxPoint x="10" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ChangeRecord 1 ──→ 0..* Junction -->
+        <mxCell id="rel_chg_junc" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;strokeColor=#C7C7CC;strokeWidth=1.5;endArrow=blockThin;endSize=6;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;html=1;" edge="1" source="ent_chg" target="ent_junc" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel_chg_junc_1" value="&lt;font color=&quot;#86868B&quot; style=&quot;font-size:10px;&quot;&gt;1&lt;/font&gt;" style="edgeLabel;fontFamily=Helvetica Neue;html=1;" vertex="1" connectable="0" parent="rel_chg_junc">
+          <mxGeometry x="-0.8" relative="1" as="geometry">
+            <mxPoint x="-10" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_chg_junc_n" value="&lt;font color=&quot;#86868B&quot; style=&quot;font-size:10px;&quot;&gt;0..*&lt;/font&gt;" style="edgeLabel;fontFamily=Helvetica Neue;html=1;" vertex="1" connectable="0" parent="rel_chg_junc">
+          <mxGeometry x="0.8" relative="1" as="geometry">
+            <mxPoint x="10" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Junction 0..* ──→ CertificateRecord -->
+        <mxCell id="rel_junc_cr" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;strokeColor=#C7C7CC;strokeWidth=1.5;endArrow=blockThin;endSize=6;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;html=1;" edge="1" source="ent_junc" target="ent_cr" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel_junc_cr_n" value="&lt;font color=&quot;#86868B&quot; style=&quot;font-size:10px;&quot;&gt;0..*&lt;/font&gt;" style="edgeLabel;fontFamily=Helvetica Neue;html=1;" vertex="1" connectable="0" parent="rel_junc_cr">
+          <mxGeometry x="-0.5" relative="1" as="geometry">
+            <mxPoint x="-10" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ═══ LEGEND (bottom right) ═══ -->
+        <mxCell id="legend_bg" value="" style="rounded=1;arcSize=12;fillColor=#F9F9F9;strokeColor=#E5E5EA;strokeWidth=1;html=1;" vertex="1" parent="1">
+          <mxGeometry x="590" y="530" width="280" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg_title" value="Legend" style="text;fontFamily=Helvetica Neue;fontStyle=1;fontSize=11;fontColor=#1D1D1F;align=left;html=1;" vertex="1" parent="1">
+          <mxGeometry x="606" y="535" width="60" height="18" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg1_dot" value="" style="ellipse;fillColor=#007AFF;strokeColor=none;html=1;" vertex="1" parent="1">
+          <mxGeometry x="606" y="558" width="8" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg1_txt" value="&lt;font color=&quot;#636366&quot;&gt;Endpoint — FQDN identity anchor&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10;align=left;html=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="554" width="240" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg2_dot" value="" style="ellipse;fillColor=#34C759;strokeColor=none;html=1;" vertex="1" parent="1">
+          <mxGeometry x="606" y="578" width="8" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg2_txt" value="&lt;font color=&quot;#636366&quot;&gt;CertificateRecord — 34-field schema&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10;align=left;html=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="574" width="240" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg3_dot" value="" style="ellipse;fillColor=#5856D6;strokeColor=none;html=1;" vertex="1" parent="1">
+          <mxGeometry x="606" y="598" width="8" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg3_txt" value="&lt;font color=&quot;#636366&quot;&gt;DeploymentTarget — defender/origin/gw&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10;align=left;html=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="594" width="240" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg4_dot" value="" style="ellipse;fillColor=#FF9500;strokeColor=none;html=1;" vertex="1" parent="1">
+          <mxGeometry x="606" y="618" width="8" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg4_txt" value="&lt;font color=&quot;#636366&quot;&gt;ChangeRecord — CRQ + evidence links&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10;align=left;html=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="614" width="240" height="16" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg5_dot" value="" style="ellipse;fillColor=#C7C7CC;strokeColor=none;html=1;" vertex="1" parent="1">
+          <mxGeometry x="606" y="638" width="8" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg5_txt" value="&lt;font color=&quot;#636366&quot;&gt;Junction — many-to-many link table&lt;/font&gt;" style="text;fontFamily=Helvetica Neue;fontSize=10;align=left;html=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="634" width="240" height="16" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

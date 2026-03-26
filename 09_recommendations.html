@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Security Architecture and Engineering L4 SecEng Team Telstra Group" />
+  <title>Certificate Lifecycle Operating Model</title>
+  
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+
+
+<title>Recommendations</title>
+<style>
+  :root { --text-primary: #1d1d1f; --text-secondary: #6e6e73; --text-link: #0066cc; --bg-primary: #fff; --bg-secondary: #f5f5f7; --bg-code: #f5f5f7; --border: #d2d2d7; --panel-info-bg: #e8f0fe; --panel-info-border: #4285f4; --panel-warn-bg: #fef7e0; --panel-warn-border: #f9ab00; --panel-error-bg: #fce8e6; --panel-error-border: #d93025; }
+  body { font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.52947; color: var(--text-primary); max-width: 980px; margin: 0 auto; padding: 0 22px; background: var(--bg-primary); -webkit-font-smoothing: antialiased; }
+  h1 { font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 28px; font-weight: 600; color: var(--text-primary); letter-spacing: .007em; line-height: 1.14286; margin: 40px 0 12px 0; }
+  h2 { font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 22px; font-weight: 600; color: var(--text-primary); letter-spacing: .016em; line-height: 1.18182; margin: 32px 0 8px 0; }
+  h3 { font-size: 17px; font-weight: 600; color: var(--text-primary); letter-spacing: -.022em; line-height: 1.23536; margin: 24px 0 6px 0; }
+  h4 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 16px 0 4px 0; }
+  p { margin: 8px 0; }
+  a { color: var(--text-link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 13px; }
+  th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--bg-secondary); font-weight: 600; color: var(--text-primary); }
+  tr:nth-child(even) { background: #fafafa; }
+  code { font-family: "SF Mono", SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace; font-size: 12px; background: var(--bg-code); padding: 2px 5px; border-radius: 4px; color: var(--text-primary); }
+  pre { background: var(--bg-code); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; overflow-x: auto; font-size: 12px; line-height: 1.6; }
+  pre code { background: none; padding: 0; }
+  figure { margin: 20px 0; text-align: center; }
+  figcaption { font-size: 12px; color: var(--text-secondary); margin-top: 8px; font-style: italic; line-height: 1.4; }
+  img { max-width: 100%; height: auto; border-radius: 4px; }
+  ul, ol { padding-left: 22px; margin: 8px 0; }
+  li { margin-bottom: 4px; }
+  blockquote { border-left: 3px solid var(--panel-info-border); background: var(--panel-info-bg); margin: 12px 0; padding: 12px 16px; border-radius: 0 4px 4px 0; }
+  #TOC { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 16px 22px; margin-bottom: 28px; }
+  #TOC ul { list-style: none; padding-left: 16px; }
+  #TOC > ul { padding-left: 0; }
+  #TOC a { color: var(--text-link); }
+  .header-section-number { color: var(--text-secondary); margin-right: 6px; }
+  .confluence-info-panel { border-left: 3px solid var(--panel-info-border); background: var(--panel-info-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  .confluence-warning-panel { border-left: 3px solid var(--panel-warn-border); background: var(--panel-warn-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  .confluence-error-panel { border-left: 3px solid var(--panel-error-border); background: var(--panel-error-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  nav { background: var(--bg-secondary); padding: 10px 16px; margin-bottom: 20px; border-bottom: 2px solid var(--panel-info-border); font-size: 13px; border-radius: 0; }
+  nav a { color: var(--text-link); font-weight: 500; }
+  strong { font-weight: 600; }
+  @media (max-width: 735px) { body { font-size: 14px; padding: 0 16px; } h1 { font-size: 24px; } h2 { font-size: 19px; } }
+</style>
+
+<style id="site-chrome-fix">body{padding-top:0!important}#site-header+nav,#site-header+*{margin-top:12px}</style>
+</head>
+<body>
+<nav>
+  <a href="00_parent_overview.html">^ Operating Model Home</a>
+   | <a href="08_toolchain_nonk8s.html">&lt; Toolchain and Non-Kubernetes Estate</a> | <a href="10_compliance_roadmap_appendices.html">Compliance, Roadmap and Appendices &gt;</a>
+</nav>
+<h1 data-number="16" id="recommendations"><span class="header-section-number">16</span> Recommendations</h1>
+<h2 data-number="16.1" id="r1-resolve-dcerts-acme-blocker"><span class="header-section-number">16.1</span> R1: Resolve DCERTS ACME Blocker</h2>
+<div class="confluence-info-panel"><strong>Recommendation.</strong> Engage AppViewX vendor to resolve the HTTP 500 (<code>AVX_CERT-ACME-008</code>) error blocking automated certificate issuance.</div>
+<p><em>Conservative option:</em></p>
+<ul>
+<li><p>Escalate to vendor with full debug logs and transaction traces</p></li>
+<li><p>Establish SLA for vendor response (target: 5 business days)</p></li>
+<li><p>Document manual fallback procedure for production use</p></li>
+</ul>
+<p><em>Pragmatic option:</em></p>
+<ul>
+<li><p>Continue manual DCERTS portal workflow while awaiting fix, but make it <strong>deterministic</strong>: standardised request templates, mandatory lint gates, and an explicit evidence pack per issuance/renewal.</p></li>
+<li><p>If browser automation (Selenium/Playwright) is used, constrain it to <strong>read-only evidence capture</strong> and explicitly prevent it becoming an unofficial issuance control path. Minimum controls:</p>
+<ul>
+<li><p><strong>Read-only scope:</strong> automation may only export reports / capture page state; it must not submit forms, click “approve/issue/renew”, upload CSRs, or trigger any workflow transitions.</p></li>
+<li><p><strong>Separated identity:</strong> use a dedicated evidence-only service account with read-only entitlements; do not reuse any account that can request/approve/issue/renew.</p></li>
+<li><p><strong>Hard technical guardrails:</strong> enforce network allowlists and application-layer blocks so the automation cannot reach DCERTS endpoints associated with issuance actions (even if code changes under pressure).</p></li>
+<li><p><strong>Deterministic execution and auditability:</strong> full request/response logging, retry/backoff with alerting, and tamper-evident storage (hash + timestamp) for exported artefacts/screenshots.</p></li>
+<li><p><strong>Operational policy:</strong> any attempt to extend automation beyond evidence capture is treated as a change to a control and requires explicit security/PQI governance approval (tracked as a change record with a risk assessment).</p></li>
+</ul></li>
+<li><p>Prefer an <strong>API-first</strong> interim automation path (DCERTS REST API direct integration) while ACME remains blocked; re-evaluate STAC (AWS-native certificate management) only if it can preserve split custody, auditability, and CA policy equivalence.</p></li>
+</ul>
+<h2 data-number="16.2" id="r2-implement-certificate-inventory"><span class="header-section-number">16.2</span> R2: Implement Certificate Inventory</h2>
+<div class="confluence-info-panel"><strong>Recommendation.</strong> Deploy a machine-readable certificate inventory and manage the transition from bootstrap (non-authoritative) to authoritative source of truth once integrity controls are operating.</div>
+<p><em>Conservative option:</em></p>
+<ul>
+<li><p>CMDB integration with custom certificate asset class</p></li>
+<li><p>Automated discovery via certificate transparency logs and endpoint scanning</p></li>
+<li><p>API-first design for automation integration</p></li>
+</ul>
+<p><em>Pragmatic option:</em></p>
+<ul>
+<li><p>Use the existing <strong>Confluence certificate inventory page</strong> as the <strong>bootstrap inventory</strong> (not authoritative unless integrity controls are in place) using the defined schema</p></li>
+<li><p>Put minimum integrity controls in place: named data owner, write access restricted by group, change history enabled, and validation rules for CN/SAN, dates, and environment</p></li>
+<li><p>Reconcile weekly against DCERTS exports and endpoint scan results; treat reconciliations as evidence artefacts</p></li>
+<li><p>Define the cutover criteria for “authoritative” status (e.g., automated ingest/sync + validation + workflow) and a migration path to a machine-readable system with API access</p></li>
+</ul>
+<h2 data-number="16.3" id="r3-deploy-control-gates"><span class="header-section-number">16.3</span> R3: Deploy Control Gates</h2>
+<div class="confluence-info-panel"><strong>Recommendation.</strong> Implement deterministic validation gates for CSR, certificate, and deployment stages.</div>
+<p><em>Conservative option:</em></p>
+<ul>
+<li><p>Integrate ZLint or certlint for CSR and certificate validation</p></li>
+<li><p>Automated chain validation with OpenSSL and JVM compatibility testing</p></li>
+<li><p>Gate failures block pipeline with mandatory remediation</p></li>
+</ul>
+<p><em>Pragmatic option:</em></p>
+<ul>
+<li><p>Start with manual checklist validation</p></li>
+<li><p>Add shell script wrappers for OpenSSL validation commands</p></li>
+<li><p>Capture validation output in evidence pack</p></li>
+</ul>
+<h2 data-number="16.4" id="r4-establish-emergency-templates"><span class="header-section-number">16.4</span> R4: Establish Emergency Templates</h2>
+<div class="confluence-info-panel"><strong>Recommendation.</strong> Pre-approve emergency change templates with defined escalation paths.</div>
+<p><em>Conservative option:</em></p>
+<ul>
+<li><p>Define playbooks for: leaf revocation, key compromise, intermediate CA revocation</p></li>
+<li><p>Pre-approved change templates with 4-hour SLO</p></li>
+<li><p>Quarterly tabletop exercises</p></li>
+</ul>
+<p><em>Pragmatic option:</em></p>
+<ul>
+<li><p>Document emergency contact matrix (L4 on-call, PKI team, Cequence support)</p></li>
+<li><p>Add revocation scenarios to existing renewal planning meetings</p></li>
+<li><p>Test rollback procedure annually</p></li>
+</ul>
+<h2 data-number="16.5" id="r5-auto-generate-change-review-packs"><span class="header-section-number">16.5</span> R5: Auto-Generate Change Review Packs</h2>
+<div class="confluence-info-panel"><strong>Recommendation.</strong> Automate generation of the Change Review Pack (CRP) for certificate renewal changes. The current process is fully manual: each renewal requires a CRP populated from scratch with certificate details, stakeholder contacts, PVT criteria, and backout procedures. At scale this becomes a bottleneck (analogous to the 2–3 hour CIP generation problem observed by other platform teams). Auto-populating the CRP from the certificate inventory eliminates transcription errors and reduces SecEng coordination time from hours to minutes per renewal (see Table <a href="#tab:effort-reduction" data-reference-type="ref" data-reference="tab:effort-reduction">2</a>).</div>
+<p><em>Conservative option:</em></p>
+<ul>
+<li><p>Build a CRP generator that pulls certificate metadata (CN, SAN, issuer, expiry, custody zone, deployment targets) from the inventory and populates the standard CRP template fields automatically</p></li>
+<li><p>Include pre-filled PVT criteria (fingerprint check, chain validation, SLO thresholds) drawn from the G3 gate specification</p></li>
+<li><p>Generate the backout procedure from the <code>rollback_ref</code> in the inventory (previous certificate version and deployment state)</p></li>
+</ul>
+<p><em>Pragmatic option:</em></p>
+<ul>
+<li><p>Create a parameterised CRP template (Confluence or SharePoint) that pre-populates from inventory export</p></li>
+<li><p>Require only manual review and approval signature rather than manual data entry</p></li>
+<li><p>Target: CRP generation time from hours to minutes per renewal</p></li>
+</ul>
+<h2 data-number="16.6" id="r6-confirm-secrets-management-ownership"><span class="header-section-number">16.6</span> R6: Confirm Secrets Management Ownership</h2>
+<div class="confluence-info-panel"><strong>Recommendation.</strong> Confirm that the Cequence SaaS vendor and OKAPI platform team maintain secrets custody (private keys, EAB keys, TSIG secrets) via their respective control planes (AWS Secrets Manager, Vault/ESM). Document the custody boundary explicitly so that audit and incident response know which team to engage for key-related operations.</div>
+<p><em>Conservative option:</em></p>
+<ul>
+<li><p>Obtain written confirmation of custody ownership per environment (prod, non-prod) from Cequence vendor and OKAPI Ops</p></li>
+<li><p>Ensure the custody model is captured in the certificate inventory (<code>key_custody</code> field)</p></li>
+<li><p>Verify that vendor SOC2 or equivalent attestation covers key management controls</p></li>
+</ul>
+<p><em>Pragmatic option:</em></p>
+<ul>
+<li><p>Document current custody arrangements in the operational specification</p></li>
+<li><p>Add custody verification to the annual review cadence</p></li>
+</ul>
+<h2 data-number="16.7" id="r7-deploy-orr-gate-and-trust-anchor-allowlist"><span class="header-section-number">16.7</span> R7: Deploy ORR Gate and Trust Anchor Allowlist</h2>
+<div class="confluence-info-panel"><strong>Recommendation.</strong> Deploy the Operational Readiness Review gate (Section <a href="#sec:orr-gate" data-reference-type="ref" data-reference="sec:orr-gate">4.5.3</a>) as a blocking deployment control and operationalise the trust anchor allowlist (Section <a href="#sec:trust-anchor-allowlist" data-reference-type="ref" data-reference="sec:trust-anchor-allowlist">7.2</a>) for non-Telstra CA onboarding.</div>
+<p><em>Conservative option:</em></p>
+<ul>
+<li><p>Integrate KUDOS Compare API into the renewal workflow; enforce ORR form submission before any certificate reaches production</p></li>
+<li><p>Complete CA due diligence (Table <a href="#tab:ca-due-diligence" data-reference-type="ref" data-reference="tab:ca-due-diligence">9</a>) for Amazon Trust Services (ACM) as the first non-Telstra CA entry</p></li>
+<li><p>Validate ACM delegation on a single non-production defender endpoint (Section <a href="#sec:acm-delegation" data-reference-type="ref" data-reference="sec:acm-delegation">7.1.1</a>, fastest disproof test)</p></li>
+</ul>
+<p><em>Pragmatic option:</em></p>
+<ul>
+<li><p>Run ORR in advisory mode (log risk scores, do not block) for one renewal cycle to baseline risk score distribution</p></li>
+<li><p>Add Amazon Trust Services to the allowlist with Tier 2 controls; defer Tier 3 (BYO domain, external CA) until Phase 2 demand materialises</p></li>
+<li><p>Use CloudWatch/SNS event forwarding as the compensating control for I5 (approval boundary) on ACM-managed certificates</p></li>
+</ul>
+<h2 data-number="16.8" id="r8-enable-domain-authorisation-for-custom-domains"><span class="header-section-number">16.8</span> R8: Enable Domain Authorisation for Custom Domains</h2>
+<div class="confluence-info-panel"><strong>Recommendation.</strong> Operationalise domain authorisation (Section <a href="#sec:domain-authorisation" data-reference-type="ref" data-reference="sec:domain-authorisation">7.1</a>) for custom domain routing on Cequence defenders.</div>
+<p><em>Conservative option:</em></p>
+<ul>
+<li><p>Enforce domain allowlist in the CSR lint gate (Section <a href="#sec:csr-lint-gate" data-reference-type="ref" data-reference="sec:csr-lint-gate">11.1</a>); reject any SAN not on the list</p></li>
+<li><p>Deploy NGINX <code>location</code> block routing incrementally per-API (Section <a href="#sec:domain-authorisation" data-reference-type="ref" data-reference="sec:domain-authorisation">7.1</a>, custom domain routing approach)</p></li>
+<li><p>Require domain authorisation evidence (Table <a href="#tab:domain-auth-evidence" data-reference-type="ref" data-reference="tab:domain-auth-evidence">8</a>) attached to every certificate object before issuance</p></li>
+</ul>
+<p><em>Pragmatic option:</em></p>
+<ul>
+<li><p>Start with Phase 1 (Telstra-owned domains only); document the Phase 2 gate criteria but do not enable BYO domain onboarding</p></li>
+<li><p>Pilot the NGINX location block routing on one custom domain in non-production before applying to production defenders</p></li>
+<li><p>Track domain authorisation expiry (12-month validity) in the certificate inventory with automated renewal alerts</p></li>
+<li><p>For Phase 2 BYO domains: monitor <code>domain_registration_expiry</code> against certificate <code>not_after</code>; flag for immediate review if the domain registration expires before the certificate</p></li>
+</ul>
+
+<script defer src="assets/download-injector.js"></script>
+</body>
+</html>

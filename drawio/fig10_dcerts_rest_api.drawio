@@ -1,0 +1,106 @@
+<mxfile host="draw.io" type="device">
+  <diagram id="fig10" name="Fig 10 — DCERTS REST API Integration">
+    <mxGraphModel dx="820" dy="400" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="820" pageHeight="400" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Left Actors -->
+        <mxCell id="10" value="&lt;b&gt;Cequence SaaS Ops&lt;/b&gt;&lt;br/&gt;&lt;i&gt;Vendor-managed&lt;/i&gt;" style="rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#F1ECE6;strokeColor=#A2845E;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="20" y="40" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="11" value="&lt;b&gt;OKAPI Ops&lt;/b&gt;" style="rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#EEEEFF;strokeColor=#5856D6;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="20" y="130" width="140" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Center: Automation Client -->
+        <mxCell id="12" value="&lt;b&gt;Automation Client&lt;/b&gt;&lt;br/&gt;&lt;i&gt;Key Gen + CSR&lt;/i&gt;" style="rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#EEEEFF;strokeColor=#5856D6;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="260" y="80" width="150" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Right: DCERTS REST API -->
+        <mxCell id="13" value="&lt;b&gt;DCERTS REST API&lt;/b&gt;" style="rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#E5F0FF;strokeColor=#007AFF;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="510" y="40" width="140" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- PKI R/A Diamond -->
+        <mxCell id="14" value="&lt;b&gt;PKI R/A&lt;/b&gt;" style="rhombus;rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#FFF4E5;strokeColor=#FF9500;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="600" y="115" width="80" height="65" as="geometry"/>
+        </mxCell>
+
+        <!-- Enterprise CA (DigiCert) -->
+        <mxCell id="15" value="&lt;b&gt;Enterprise CA&lt;/b&gt;&lt;br/&gt;&lt;i&gt;DigiCert&lt;/i&gt;" style="rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#E8F9ED;strokeColor=#34C759;strokeWidth=2;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="700" y="40" width="100" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Bottom Stores -->
+        <mxCell id="16" value="&lt;b&gt;Inventory&lt;/b&gt;" style="shape=cylinder3;rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#E5F6FE;strokeColor=#5AC8FA;size=12;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="230" y="230" width="100" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="17" value="&lt;b&gt;Vault / ASM&lt;/b&gt;" style="shape=cylinder3;rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#F3E5FA;strokeColor=#AF52DE;size=12;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="380" y="230" width="100" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="18" value="&lt;b&gt;TLS Terminator&lt;/b&gt;" style="rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#E5F0FF;strokeColor=#007AFF;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="530" y="230" width="120" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- CONNECTORS -->
+        <!-- 1a: Cequence SaaS Ops -> Automation Client -->
+        <mxCell id="e1a" value="&lt;b&gt;1a&lt;/b&gt; Key+CSR" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;arcSize=10;strokeColor=#C7C7CC;strokeWidth=1.5;fontFamily=Helvetica Neue;fontColor=#1D1D1F;fontSize=10;endArrow=blockThin;endSize=6;html=1;" edge="1" source="10" target="12" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- 1b: OKAPI Ops -> Automation Client -->
+        <mxCell id="e1b" value="&lt;b&gt;1b&lt;/b&gt; Key+CSR" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;arcSize=10;strokeColor=#C7C7CC;strokeWidth=1.5;fontFamily=Helvetica Neue;fontColor=#1D1D1F;fontSize=10;endArrow=blockThin;endSize=6;html=1;" edge="1" source="11" target="12" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- 2: Automation Client -> DCERTS REST API -->
+        <mxCell id="e2" value="&lt;b&gt;2&lt;/b&gt; REST POST" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;arcSize=10;strokeColor=#007AFF;strokeWidth=2;fontFamily=Helvetica Neue;fontColor=#1D1D1F;fontSize=10;endArrow=blockThin;endSize=6;html=1;" edge="1" source="12" target="13" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- 3: DCERTS -> PKI R/A -->
+        <mxCell id="e3a" value="&lt;b&gt;3&lt;/b&gt; Issue" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;arcSize=10;strokeColor=#007AFF;strokeWidth=2;fontFamily=Helvetica Neue;fontColor=#1D1D1F;fontSize=10;endArrow=blockThin;endSize=6;html=1;" edge="1" source="13" target="14" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- PKI R/A -> Enterprise CA -->
+        <mxCell id="e3b" value="" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;arcSize=10;strokeColor=#007AFF;strokeWidth=2;fontFamily=Helvetica Neue;fontColor=#1D1D1F;fontSize=10;endArrow=blockThin;endSize=6;html=1;" edge="1" source="14" target="15" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- 4: Enterprise CA -> Automation Client (Leaf+Chain) -->
+        <mxCell id="e4" value="&lt;b&gt;4&lt;/b&gt; Leaf+Chain" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;arcSize=10;strokeColor=#34C759;strokeWidth=2;fontFamily=Helvetica Neue;fontColor=#1D1D1F;fontSize=10;endArrow=blockThin;endSize=6;html=1;" edge="1" source="15" target="12" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="750" y="185"/>
+              <mxPoint x="335" y="185"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <!-- 5: Automation Client -> Vault/ASM (Store) -->
+        <mxCell id="e5" value="&lt;b&gt;5&lt;/b&gt; Store" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;arcSize=10;strokeColor=#C7C7CC;strokeWidth=1.5;fontFamily=Helvetica Neue;fontColor=#1D1D1F;fontSize=10;endArrow=blockThin;endSize=6;html=1;" edge="1" source="12" target="17" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- 6: Automation Client -> Inventory (Record) -->
+        <mxCell id="e6" value="&lt;b&gt;6&lt;/b&gt; Record" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;arcSize=10;strokeColor=#C7C7CC;strokeWidth=1.5;fontFamily=Helvetica Neue;fontColor=#1D1D1F;fontSize=10;endArrow=blockThin;endSize=6;html=1;" edge="1" source="12" target="16" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- 7: Automation Client -> TLS Terminator (Deploy) -->
+        <mxCell id="e7" value="&lt;b&gt;7&lt;/b&gt; Deploy" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;arcSize=10;strokeColor=#007AFF;strokeWidth=2;fontFamily=Helvetica Neue;fontColor=#1D1D1F;fontSize=10;endArrow=blockThin;endSize=6;html=1;" edge="1" source="12" target="18" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- 8: TLS Terminator -> Automation Client (SNI probe verify) dashed -->
+        <mxCell id="e8" value="&lt;b&gt;8&lt;/b&gt; SNI probe verify" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;arcSize=10;strokeColor=#34C759;strokeWidth=2;fontFamily=Helvetica Neue;fontColor=#1D1D1F;fontSize=10;endArrow=blockThin;endSize=6;dashed=1;html=1;" edge="1" source="18" target="12" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="590" y="310"/>
+              <mxPoint x="335" y="310"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="leg10" value="&lt;b&gt;Legend&lt;/b&gt;&lt;br/&gt;Blue = Lifecycle&lt;br/&gt;Green = Terminal&lt;br/&gt;Orange = Gate&lt;br/&gt;Purple = Process&lt;br/&gt;Cyan = DataStore&lt;br/&gt;Violet = Evidence&lt;br/&gt;Brown = Vendor" style="rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#F2F2F7;strokeColor=#D1D1D6;fontSize=9;align=left;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="680" y="230" width="120" height="150" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

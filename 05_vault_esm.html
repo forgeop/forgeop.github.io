@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Security Architecture and Engineering L4 Security Engineering Team Telstra Group" />
+  <title>Certificate Lifecycle Operating Model</title>
+  
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+
+
+<title>Vault/ESM and Secrets Management</title>
+<style>
+  :root { --text-primary: #1d1d1f; --text-secondary: #6e6e73; --text-link: #0066cc; --bg-primary: #fff; --bg-secondary: #f5f5f7; --bg-code: #f5f5f7; --border: #d2d2d7; --panel-info-bg: #e8f0fe; --panel-info-border: #4285f4; --panel-warn-bg: #fef7e0; --panel-warn-border: #f9ab00; --panel-error-bg: #fce8e6; --panel-error-border: #d93025; }
+  body { font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.52947; color: var(--text-primary); max-width: 980px; margin: 0 auto; padding: 0 22px; background: var(--bg-primary); -webkit-font-smoothing: antialiased; }
+  h1 { font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 28px; font-weight: 600; color: var(--text-primary); letter-spacing: .007em; line-height: 1.14286; margin: 40px 0 12px 0; }
+  h2 { font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 22px; font-weight: 600; color: var(--text-primary); letter-spacing: .016em; line-height: 1.18182; margin: 32px 0 8px 0; }
+  h3 { font-size: 17px; font-weight: 600; color: var(--text-primary); letter-spacing: -.022em; line-height: 1.23536; margin: 24px 0 6px 0; }
+  h4 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 16px 0 4px 0; }
+  p { margin: 8px 0; }
+  a { color: var(--text-link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 13px; }
+  th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--bg-secondary); font-weight: 600; color: var(--text-primary); }
+  tr:nth-child(even) { background: #fafafa; }
+  code { font-family: "SF Mono", SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace; font-size: 12px; background: var(--bg-code); padding: 2px 5px; border-radius: 4px; color: var(--text-primary); }
+  pre { background: var(--bg-code); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; overflow-x: auto; font-size: 12px; line-height: 1.6; }
+  pre code { background: none; padding: 0; }
+  figure { margin: 20px 0; text-align: center; }
+  figcaption { font-size: 12px; color: var(--text-secondary); margin-top: 8px; font-style: italic; line-height: 1.4; }
+  img { max-width: 100%; height: auto; border-radius: 4px; }
+  ul, ol { padding-left: 22px; margin: 8px 0; }
+  li { margin-bottom: 4px; }
+  blockquote { border-left: 3px solid var(--panel-info-border); background: var(--panel-info-bg); margin: 12px 0; padding: 12px 16px; border-radius: 0 4px 4px 0; }
+  #TOC { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 16px 22px; margin-bottom: 28px; }
+  #TOC ul { list-style: none; padding-left: 16px; }
+  #TOC > ul { padding-left: 0; }
+  #TOC a { color: var(--text-link); }
+  .header-section-number { color: var(--text-secondary); margin-right: 6px; }
+  .confluence-info-panel { border-left: 3px solid var(--panel-info-border); background: var(--panel-info-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  .confluence-warning-panel { border-left: 3px solid var(--panel-warn-border); background: var(--panel-warn-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  .confluence-error-panel { border-left: 3px solid var(--panel-error-border); background: var(--panel-error-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  nav { background: var(--bg-secondary); padding: 10px 16px; margin-bottom: 20px; border-bottom: 2px solid var(--panel-info-border); font-size: 13px; border-radius: 0; }
+  nav a { color: var(--text-link); font-weight: 500; }
+  strong { font-weight: 600; }
+  @media (max-width: 735px) { body { font-size: 14px; padding: 0 16px; } h1 { font-size: 24px; } h2 { font-size: 19px; } }
+</style>
+
+<style id="site-chrome-fix">body{padding-top:0!important}#site-header+nav,#site-header+*{margin-top:12px}</style>
+</head>
+<body>
+<nav style="background:#f8f9fa; padding:0.5rem 1rem; margin-bottom:1rem; border-bottom:2px solid #d0ebff; font-size:0.85rem;">
+  <a href="00_parent_overview.html" style="color:#1971c2; text-decoration:none; font-weight:600;">↑ Operating Model Home</a>
+   | <a href="04_dcerts_acme_automation.html" style="color:#1971c2; text-decoration:none;">← DCERTS, ACME and Automation</a> | <a href="06_lifecycle_inventory_telemetry.html" style="color:#1971c2; text-decoration:none;">Lifecycle Stages, Inventory and Telemetry →</a>
+</nav>
+<h1 data-number="9" id="sec:vault-esm"><span class="header-section-number">9</span> HashiCorp Vault Integration (ESM)</h1>
+<p>The Enterprise Secrets Management (ESM) platform based on HashiCorp Vault provides the target-state secrets management solution. Vault/ESM is the single secrets control plane for governance (policy, access control, rotation, audit). Kubernetes <code>Secret</code> objects are a workload-facing delivery format only (a distribution cache) and must not be treated as the governance boundary or system of record for private keys.</p>
+<p>Some workflows may still materialise secrets into Kubernetes (e.g., operator patterns, ingress controller TLS termination, cert-manager outputs). These must be constrained so they do not become a second control plane:</p>
+<ul>
+<li><p>The source of truth for sensitive credentials (EAB keys, TSIG secrets, API tokens) must be Vault/ESM (or, until Vault is available, AWS Secrets Manager as an interim control plane), with Kubernetes Secrets populated by a controlled sync mechanism.</p></li>
+<li><p>Any Kubernetes Secret that contains a private key is treated as <strong>runtime only</strong>: namespace-scoped, least-privilege RBAC, encryption-at-rest enabled for etcd, and a defined rotation/expiry process.</p></li>
+<li><p>Teams must not create parallel “manual” stores (SharePoint, ad-hoc copies) for private keys or perpetual credentials; any exception must be time-bound and recorded as a risk acceptance.</p></li>
+</ul>
+<h2 data-number="9.1" id="esm-architecture-overview"><span class="header-section-number">9.1</span> ESM Architecture Overview</h2>
+<ul>
+<li><p><strong>Phase 1 (Current):</strong> Vault cluster on AMP Kubernetes (AWS EKS) <strong>in an Australian region / AU-resident landing zone</strong> <em>(requires confirmation; no evidence cited; see minimum evidence checklist below)</em>.</p></li>
+<li><p><strong>Phase 2 (Planned):</strong> Vault cluster in Azure tenancy <strong>in an Australian region</strong> <em>(requires confirmation)</em>.</p></li>
+<li><p><strong>Phase 3 (Planned):</strong> On-premises deployment on PUMA <strong>in Australia</strong> <em>(requires confirmation)</em>.</p></li>
+</ul>
+<p>Multi-cloud sequencing is acceptable only if every phase used for production key operations is demonstrably AU-resident. Any phase that is not AU-resident MUST NOT be used for production private key generation, signing, or storage. It may only store non-sensitive artefacts (e.g., public certificates/CA bundles) until an Australian-hosted deployment is available and approved.</p>
+<p><strong>Minimum evidence required per phase (before production use):</strong></p>
+<ul>
+<li><p>Cloud region/site and tenancy/landing-zone identifier (explicitly AU)</p></li>
+<li><p>Confirmation that backups, replication, and log sinks remain in Australia (including DR patterns)</p></li>
+<li><p>Key handling model (HSM/KMS/Vault), including whether keys are exportable</p></li>
+<li><p>Migration approach: <strong>no cross-cloud private key movement</strong> (rotate by generating a new key in the target phase and re-issuing via DCERTS)</p></li>
+</ul>
+<h2 data-number="9.2" id="certificate-lifecycle-capabilities"><span class="header-section-number">9.2</span> Certificate Lifecycle Capabilities</h2>
+<p>HashiCorp Vault provides native PKI capabilities relevant to certificate lifecycle:</p>
+<div id="tab:vault-pki">
+<table style="width:93%;">
+<caption>HashiCorp Vault PKI capabilities from ESM BRD.</caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 68%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Capability</strong></th>
+<th style="text-align: left;"><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">PKI secrets engine</td>
+<td style="text-align: left;">Generate private keys and CSRs; <strong>can</strong> operate as a CA/issuer <strong>only if explicitly delegated and governed</strong>. In this operating model, DCERTS remains the enterprise issuance portal/authority for production leaf certificates.</td>
+</tr>
+<tr>
+<td style="text-align: left;">Certificate signing</td>
+<td style="text-align: left;">Support patterns where Vault participates in an issuance workflow (e.g., key+CSR generation, policy enforcement, storage, and distribution) while an external enterprise CA/portal (DCERTS) performs the signing and maintains issuance records.</td>
+</tr>
+<tr>
+<td style="text-align: left;">Perpetual secrets</td>
+<td style="text-align: left;">Create non-expiring <em>credentials</em> (for example, EAB keys / TSIG secrets). <strong>Certificates must not be perpetual:</strong> the <em>target-state</em> is short-lived certificates (e.g., 90-day) with automated renewal (ACME or DCERTS REST/operator); <em>until that automation is available</em>, the operating model assumes DCERTS-issued certificates up to the 398-day maximum with deterministic, early, manual renewals (see Section <a href="#sec:runbooks" data-reference-type="ref" data-reference="sec:runbooks">13</a>).</td>
+</tr>
+<tr>
+<td style="text-align: left;">Encryption service</td>
+<td style="text-align: left;">All secrets encrypted at rest (AES-256-GCM) and in transit (TLS 1.2+)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Fine-grained policy</td>
+<td style="text-align: left;">ABAC policies attached to secrets or secret hierarchies</td>
+</tr>
+<tr>
+<td style="text-align: left;">HSM integration</td>
+<td style="text-align: left;">Master key storage in external HSM module</td>
+</tr>
+<tr>
+<td style="text-align: left;">Agent injector</td>
+<td style="text-align: left;">Runtime secrets injection for Kubernetes pods (sidecar pattern)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 data-number="9.3" id="integration-pattern"><span class="header-section-number">9.3</span> Integration Pattern</h2>
+<p>Vault integration does not imply centralised certificate issuance or key custody. If adopted, Vault must operate as a multi-tenant secrets platform with strict isolation between Cequence and OKAPI custody domains (separate namespaces/mount paths, separate auth roles, separate audit scopes, and no cross-team read access to private key material).</p>
+<p><strong>Governance boundary:</strong></p>
+<ul>
+<li><p><strong>Issuer of record:</strong> For production leaf certificates, DCERTS is the issuer of record and the authoritative lifecycle system (request/approval/issuance/renewal/revocation and audit trail).</p></li>
+<li><p><strong>Vault role in this model:</strong> Vault handles secrets custody, access control, distribution, and (optionally) CSR/key generation <em>on behalf of</em> workloads. It is <strong>not</strong> an enterprise issuing CA for externally trusted certificates unless PKI governance explicitly delegates that authority.</p></li>
+<li><p><strong>What “external CA root” means here:</strong> It means the enterprise/public trust chain that workloads must trust/serve (e.g., DCERTS-selected CA chain). It does <strong>not</strong> mean Vault is permitted to mint certificates from a DCERTS root.</p></li>
+<li><p><strong>Key custody:</strong> Private keys for Cequence edge certificates remain under Cequence-approved custody (HSM/KMS/Vault as approved); issuance authority remains with DCERTS.</p></li>
+</ul>
+<p><strong>Example A (only if governance explicitly delegates issuing authority to Vault):</strong></p>
+<pre style="cli" data-caption="Vault PKI secrets engine configuration (delegated issuer pattern; illustrative)."><code># Enable PKI secrets engine
+vault secrets enable -path=pki pki
+
+# NOTE: This is an internal-PKI pattern.
+# You cannot &quot;import&quot; a public/enterprise CA (e.g., DCERTS-selected DigiCert chain) into Vault and
+# have Vault issue from that external root. If Vault is delegated issuing authority, it must operate
+# as its own CA with an explicitly governed trust model.
+
+# Configure Vault-managed CA (example)
+vault write pki/root/generate/internal common_name=&quot;Example Internal Root&quot; ttl=&quot;87600h&quot;
+
+# Create role for certificate issuance
+vault write pki/roles/cequence-defender \
+    allowed_domains=&quot;api.telstra.com,okapi.telstra.com&quot; \
+    allow_subdomains=true \
+    max_ttl=&quot;2160h&quot; \
+    key_type=&quot;rsa&quot; \
+    key_bits=2048 \
+    require_cn=true</code></pre>
+<p><strong>Example B (governance-safe default): Vault as secrets custody/distribution around DCERTS-issued leaf certificates:</strong></p>
+<pre style="cli" data-caption="Vault as secrets custody and distribution around DCERTS (governance-safe pattern)."><code># Enable KV secrets engine (store EAB/TSIG secrets, issued certs, and keys)
+vault secrets enable -path=kv kv-v2
+
+# Store CA chain / trust bundle used by workloads for validation (example)
+vault kv put kv/pki/trust/dcerts ca_bundle=@dcerts-chain.pem
+
+# Store issued leaf + key after DCERTS issuance (example; key generation/custody must be approved)
+vault kv put kv/pki/cequence/defender/api.telstra.com \
+  tls_crt=@leaf.pem tls_key=@leaf-key.pem
+
+# DCERTS remains the issuing system; any automation should submit CSRs to DCERTS
+# via approved interfaces (portal workflow, REST API, or ACME once unblocked).</code></pre>
+
+<script defer src="assets/download-injector.js"></script>
+</body>
+</html>

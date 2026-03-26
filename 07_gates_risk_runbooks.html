@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Security Architecture and Engineering L4 SecEng Team Telstra Group" />
+  <title>Certificate Lifecycle Operating Model</title>
+  
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+
+
+<title>Gates, Risk and Runbooks</title>
+<style>
+  :root { --text-primary: #1d1d1f; --text-secondary: #6e6e73; --text-link: #0066cc; --bg-primary: #fff; --bg-secondary: #f5f5f7; --bg-code: #f5f5f7; --border: #d2d2d7; --panel-info-bg: #e8f0fe; --panel-info-border: #4285f4; --panel-warn-bg: #fef7e0; --panel-warn-border: #f9ab00; --panel-error-bg: #fce8e6; --panel-error-border: #d93025; }
+  body { font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.52947; color: var(--text-primary); max-width: 980px; margin: 0 auto; padding: 0 22px; background: var(--bg-primary); -webkit-font-smoothing: antialiased; }
+  h1 { font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 28px; font-weight: 600; color: var(--text-primary); letter-spacing: .007em; line-height: 1.14286; margin: 40px 0 12px 0; }
+  h2 { font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 22px; font-weight: 600; color: var(--text-primary); letter-spacing: .016em; line-height: 1.18182; margin: 32px 0 8px 0; }
+  h3 { font-size: 17px; font-weight: 600; color: var(--text-primary); letter-spacing: -.022em; line-height: 1.23536; margin: 24px 0 6px 0; }
+  h4 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 16px 0 4px 0; }
+  p { margin: 8px 0; }
+  a { color: var(--text-link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 13px; }
+  th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--bg-secondary); font-weight: 600; color: var(--text-primary); }
+  tr:nth-child(even) { background: #fafafa; }
+  code { font-family: "SF Mono", SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace; font-size: 12px; background: var(--bg-code); padding: 2px 5px; border-radius: 4px; color: var(--text-primary); }
+  pre { background: var(--bg-code); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; overflow-x: auto; font-size: 12px; line-height: 1.6; }
+  pre code { background: none; padding: 0; }
+  figure { margin: 20px 0; text-align: center; }
+  figcaption { font-size: 12px; color: var(--text-secondary); margin-top: 8px; font-style: italic; line-height: 1.4; }
+  img { max-width: 100%; height: auto; border-radius: 4px; }
+  ul, ol { padding-left: 22px; margin: 8px 0; }
+  li { margin-bottom: 4px; }
+  blockquote { border-left: 3px solid var(--panel-info-border); background: var(--panel-info-bg); margin: 12px 0; padding: 12px 16px; border-radius: 0 4px 4px 0; }
+  #TOC { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 16px 22px; margin-bottom: 28px; }
+  #TOC ul { list-style: none; padding-left: 16px; }
+  #TOC > ul { padding-left: 0; }
+  #TOC a { color: var(--text-link); }
+  .header-section-number { color: var(--text-secondary); margin-right: 6px; }
+  .confluence-info-panel { border-left: 3px solid var(--panel-info-border); background: var(--panel-info-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  .confluence-warning-panel { border-left: 3px solid var(--panel-warn-border); background: var(--panel-warn-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  .confluence-error-panel { border-left: 3px solid var(--panel-error-border); background: var(--panel-error-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  nav { background: var(--bg-secondary); padding: 10px 16px; margin-bottom: 20px; border-bottom: 2px solid var(--panel-info-border); font-size: 13px; border-radius: 0; }
+  nav a { color: var(--text-link); font-weight: 500; }
+  strong { font-weight: 600; }
+  @media (max-width: 735px) { body { font-size: 14px; padding: 0 16px; } h1 { font-size: 24px; } h2 { font-size: 19px; } }
+</style>
+
+<style id="site-chrome-fix">body{padding-top:0!important}#site-header+nav,#site-header+*{margin-top:12px}</style>
+</head>
+<body>
+<nav>
+  <a href="00_parent_overview.html">^ Operating Model Home</a>
+   | <a href="06_lifecycle_inventory_telemetry.html">&lt; Lifecycle Stages, Inventory and Telemetry</a> | <a href="08_toolchain_nonk8s.html">Toolchain and Non-Kubernetes Estate &gt;</a>
+</nav>
+<h1 data-number="11" id="mandatory-control-gates"><span class="header-section-number">11</span> Mandatory Control Gates</h1>
+<p>Three gates enforce certificate quality at distinct lifecycle positions. G1 (pre-issuance) prevents bad requests from reaching DCERTS. G2 (post-issuance) validates the issued certificate and assesses deployment risk via the ORR workflow. G3 (deployment) verifies runtime behaviour. Each gate exists at a different trust boundary; none is redundant with the others.</p>
+<h2 data-number="11.1" id="sec:csr-lint-gate"><span class="header-section-number">11.1</span> G1: CSR Lint Gate (Pre-Issuance)</h2>
+<div id="tab:csr-lint">
+<table style="width:92%;">
+<caption>CSR lint gate validation checks.</caption>
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 35%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Check</strong></th>
+<th style="text-align: left;"><strong>Validation Rule</strong></th>
+<th style="text-align: left;"><strong>Failure Action</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">SAN allowlist</td>
+<td style="text-align: left;">CN and SANs match approved domain list</td>
+<td style="text-align: left;">Reject with domain owner escalation</td>
+</tr>
+<tr>
+<td style="text-align: left;">Key algorithm</td>
+<td style="text-align: left;">RSA 2048+ or ECDSA P-256+</td>
+<td style="text-align: left;">Reject with key regeneration required</td>
+</tr>
+<tr>
+<td style="text-align: left;">Subject constraints</td>
+<td style="text-align: left;">O, OU, C, ST, L match organisation policy</td>
+<td style="text-align: left;">Reject with subject correction</td>
+</tr>
+<tr>
+<td style="text-align: left;">EKU correctness</td>
+<td style="text-align: left;">serverAuth for server certs</td>
+<td style="text-align: left;">Reject with EKU correction</td>
+</tr>
+<tr>
+<td style="text-align: left;">Signature algorithm</td>
+<td style="text-align: left;">SHA-256 or stronger</td>
+<td style="text-align: left;">Reject with CSR regeneration</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 data-number="11.2" id="sec:cert-lint-gate"><span class="header-section-number">11.2</span> G2: Post-Issuance Validation Specification</h2>
+<p>The following checks must pass after a certificate is issued and before it may proceed to deployment. They form the coverage specification for the ORR-integrated validation step (Section <a href="#sec:orr-gate" data-reference-type="ref" data-reference="sec:orr-gate">4.5.3</a>).</p>
+<p><strong>For renewals:</strong> the KUDOS Compare API (Section <a href="#sec:orr-gate" data-reference-type="ref" data-reference="sec:orr-gate">4.5.3</a>) validates chain status and algorithm compliance as part of its old-vs-new comparison. An AIA/CRL reachability probe runs in parallel. Together, these satisfy G2 without a separate standalone lint step.</p>
+<p><strong>For onboardings (no existing cert):</strong> standalone cert lint runs first (no old cert for comparison), then KUDOS Compare runs against a reference baseline. Both must pass.</p>
+<p><strong>Objective (per <a href="#fig:trust-chain" data-reference-type="ref" data-reference="fig:trust-chain">8</a>):</strong> chain validation MUST be explicit and repeatable. “Certificate was issued” does not satisfy this requirement.</p>
+<p><strong>Minimum validation checks (MUST pass for onboarding/renewal):</strong></p>
+<ul>
+<li><p><strong>Complete chain builds:</strong> leaf <span class="math inline">\(\rightarrow\)</span> intermediate(s) <span class="math inline">\(\rightarrow\)</span> trusted root (validated against the intended trust bundle).</p></li>
+<li><p><strong>No SHA-1 signatures anywhere in the served chain:</strong> leaf <em>and</em> intermediate(s). (Root signature is typically irrelevant for path building, but if included in the served bundle it should also be non-SHA-1.)</p></li>
+<li><p><strong>No expired intermediates:</strong> any intermediate in the served chain MUST have NotAfter in the future at deployment time.</p></li>
+<li><p><strong>AIA/CRL endpoints reachable:</strong> URLs advertised in AIA/CRL Distribution Points MUST be reachable from the relevant runtime networks, and this reachability MUST be monitored continuously (not only at change time).</p></li>
+</ul>
+<pre style="cli" data-caption="Chain lint commands (complete chain, SHA-1 detection, intermediate expiry, AIA/CRL reachability)."><code># Inputs
+LEAF=server.crt
+CHAIN=chain.pem              # intermediate(s) (and optionally root) as a PEM bundle
+TRUST_BUNDLE=ca-bundle.pem   # trust anchors used by your clients
+
+# 1) Chain builds (fails if chain is incomplete or does not link to trust)
+openssl verify -CAfile &quot;$TRUST_BUNDLE&quot; -untrusted &quot;$CHAIN&quot; &quot;$LEAF&quot;
+
+# 2) Split PEM bundle into individual certs and lint each cert for:
+#    - SHA-1 signature
+#    - Expiry (NotAfter)
+TMPDIR=$(mktemp -d)
+cat &quot;$LEAF&quot; &quot;$CHAIN&quot; &gt; &quot;$TMPDIR/fullchain.pem&quot;
+awk &#39;BEGIN{c=0}/-----BEGIN CERTIFICATE-----/{c++}{print &gt; (&quot;&#39;$TMPDIR&#39;/cert-&quot; c &quot;.pem&quot;)}&#39; &quot;$TMPDIR/fullchain.pem&quot;
+
+for f in &quot;$TMPDIR&quot;/cert-*.pem; do
+  echo &quot;=== $f ===&quot;
+  openssl x509 -in &quot;$f&quot; -noout -subject -issuer -dates
+
+  SIG=$(openssl x509 -in &quot;$f&quot; -noout -text | grep -m1 &quot;Signature Algorithm&quot;)
+  echo &quot;$SIG&quot;
+  echo &quot;$SIG&quot; | grep -qi &quot;sha1&quot; &amp;&amp; { echo &quot;FAIL: SHA-1 signature detected&quot;; exit 1; }
+
+done
+
+# 3) AIA/CRL endpoint reachability (best-effort reachability probe)
+#    Note: enforce in monitoring too; do not rely on change-time checks only.
+for url in $(openssl x509 -in &quot;$LEAF&quot; -noout -text \
+  | grep -Eo &#39;(http|https)://[^ ]+&#39; \
+  | sed &#39;s/[),]$//&#39; \
+  | sort -u); do
+  echo &quot;Probing: $url&quot;
+  curl -fsS --max-time 10 &quot;$url&quot; &gt;/dev/null || { echo &quot;FAIL: unreachable AIA/CRL URL: $url&quot;; exit 1; }
+done
+
+rm -rf &quot;$TMPDIR&quot;</code></pre>
+<h2 data-number="11.3" id="g3-deployment-safety-gate-runtime-verification"><span class="header-section-number">11.3</span> G3: Deployment Safety Gate (Runtime Verification)</h2>
+<p>Certificate changes are high-risk deployment events. Failures are immediately user-visible (handshake errors) and hard to remediate if recovery requires a service restart or re-issuance. Rotation MUST be deployable as a mechanised change with explicit pass/fail criteria, measurable safety margins, and defined rollback triggers. No service restart is expected for certificate rotation. If a restart is required, it MUST be treated as an exception with time-bound risk acceptance, compensating controls, and a tested downtime plan.</p>
+<p><strong>Gate inputs (what must exist before attempting deployment):</strong></p>
+<ul>
+<li><p>New leaf certificate + full chain package (leaf + intermediate(s)); previous package retained for rollback.</p></li>
+<li><p>Inventory record for the endpoint including <code>endpoint_fqdn</code>, <code>certificate_role</code>, <code>issuer_ca</code>, <code>valid_to</code>, and <code>rollback_ref</code>.</p></li>
+<li><p>A pre-change baseline window for handshake success rate and handshake latency (minimum: 15 minutes).</p></li>
+</ul>
+<div id="tab:deploy-gate">
+<table style="width:92%;">
+<caption>Deployment safety gate checks (enforced, measurable).</caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 42%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Check</strong></th>
+<th style="text-align: left;"><strong>How to measure (mechanistic)</strong></th>
+<th style="text-align: left;"><strong>Pass condition</strong></th>
+<th style="text-align: left;"><strong>Failure action</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Fingerprint rollout</td>
+<td style="text-align: left;">Synthetic TLS handshake (SNI) captures served leaf fingerprint pre/post change</td>
+<td style="text-align: left;">New fingerprint observed <strong>within 5 minutes</strong> of deployment start</td>
+<td style="text-align: left;"><strong>Block/rollback</strong>: deployment did not take effect or is serving stale cert</td>
+</tr>
+<tr>
+<td style="text-align: left;">No restart required</td>
+<td style="text-align: left;">Observe process start time / container ID / pod restart count for the terminating component</td>
+<td style="text-align: left;"><strong>0 restarts</strong> attributable to the cert change</td>
+<td style="text-align: left;"><strong>Block</strong>: raise platform defect unless an approved exception exists</td>
+</tr>
+<tr>
+<td style="text-align: left;">Handshake success</td>
+<td style="text-align: left;">Synthetic probe success rate for <span class="math inline">\(\geq 10\)</span> minutes during canary</td>
+<td style="text-align: left;">Success rate <strong><span class="math inline">\(\geq 99.9\%\)</span></strong> and no sustained failures</td>
+<td style="text-align: left;"><strong>Rollback</strong>: revert to previous certificate package</td>
+</tr>
+<tr>
+<td style="text-align: left;">Handshake latency</td>
+<td style="text-align: left;">Synthetic probe p95 handshake time compared to baseline window</td>
+<td style="text-align: left;">p95 increase <strong><span class="math inline">\(\leq 20\%\)</span></strong> vs baseline</td>
+<td style="text-align: left;"><strong>Rollback</strong>: revert and investigate chain/OCSP/AIA causes</td>
+</tr>
+<tr>
+<td style="text-align: left;">Chain lint</td>
+<td style="text-align: left;">Daily/inline chain build validation + signature algorithm check</td>
+<td style="text-align: left;">Chain builds; <strong>no SHA-1</strong>; intermediates not expired</td>
+<td style="text-align: left;"><strong>Block</strong>: repackage/reissue chain</td>
+</tr>
+<tr>
+<td style="text-align: left;">SNI/SAN match</td>
+<td style="text-align: left;">Synthetic handshake uses target SNI; validate SAN contains SNI</td>
+<td style="text-align: left;">SNI present in SAN allowlist</td>
+<td style="text-align: left;"><strong>Block</strong>: fix cert request/config</td>
+</tr>
+<tr>
+<td style="text-align: left;">mTLS behaviour (if enabled)</td>
+<td style="text-align: left;">Two probes: (a) known-good client cert, (b) known-bad cert</td>
+<td style="text-align: left;">(a) succeeds, (b) fails as expected</td>
+<td style="text-align: left;"><strong>Block</strong>: fix trust bundle/EKU or client auth policy</td>
+</tr>
+<tr>
+<td style="text-align: left;">Rollback readiness</td>
+<td style="text-align: left;">Exercise rollback in non-prod or validate artefacts + automation path</td>
+<td style="text-align: left;">Rollback is executable <strong>within 5 minutes</strong></td>
+<td style="text-align: left;"><strong>Block</strong>: do not enter change window</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 data-number="11.3.1" id="sec:evidence-checklist-deploy-gate"><span class="header-section-number">11.3.1</span> Evidence checklist mapping (Pattern D3 aligned to Table <a href="#tab:deploy-gate" data-reference-type="ref" data-reference="tab:deploy-gate">18</a>)</h3>
+<p><strong>Evidence completeness requirement:</strong> Pattern D3 (Evidence Checklist) MUST explicitly enforce the deployment safety gate checks in Table <a href="#tab:deploy-gate" data-reference-type="ref" data-reference="tab:deploy-gate">18</a>. An evidence pack is not complete unless every check has a corresponding, timestamped artefact.</p>
+<div id="tab:evidence-checklist-deploy-gate">
+<table style="width:92%;">
+<caption>Evidence checklist mapping: each Table <a href="#tab:deploy-gate" data-reference-type="ref" data-reference="tab:deploy-gate">18</a> check MUST have a concrete artefact attached to the change record.</caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 52%" />
+<col style="width: 22%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Gate check</strong></th>
+<th style="text-align: left;"><strong>Required evidence artefact (timestamped)</strong></th>
+<th style="text-align: left;"><strong>Minimum acceptance rule</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Fingerprint rollout</td>
+<td style="text-align: left;">Synthetic SNI handshake output showing served leaf fingerprint <em>before</em> and <em>after</em> deployment (include probe host, time, and endpoint_fqdn)</td>
+<td style="text-align: left;">New fingerprint observed within 5 minutes</td>
+</tr>
+<tr>
+<td style="text-align: left;">No restart required</td>
+<td style="text-align: left;">Terminator restart proof: (a) Kubernetes pod restart count/UID before/after, or (b) process start time/container ID before/after (for non-K8s)</td>
+<td style="text-align: left;">0 restarts attributable to cert change (otherwise exception required)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Handshake success</td>
+<td style="text-align: left;">Canary probe time series (success/failure counts) for <span class="math inline">\(\geq 10\)</span> minutes with baseline window shown</td>
+<td style="text-align: left;"><span class="math inline">\(\geq 99.9\%\)</span> success for the canary window</td>
+</tr>
+<tr>
+<td style="text-align: left;">Handshake latency</td>
+<td style="text-align: left;">Canary probe p95 handshake latency vs baseline window (same probe locations)</td>
+<td style="text-align: left;">p95 increase <span class="math inline">\(\leq 20\%\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Chain lint</td>
+<td style="text-align: left;">Output of chain build verification (<code>openssl verify</code>) + lint extract showing signature algorithms and intermediate expiry</td>
+<td style="text-align: left;">Chain builds; no SHA-1; intermediates valid</td>
+</tr>
+<tr>
+<td style="text-align: left;">SNI/SAN match</td>
+<td style="text-align: left;">Probe output showing SNI used and parsed SANs, with explicit “SNI present in SAN” confirmation</td>
+<td style="text-align: left;">SNI in SAN allowlist</td>
+</tr>
+<tr>
+<td style="text-align: left;">mTLS behaviour (if enabled)</td>
+<td style="text-align: left;">Two probe outputs: (a) known-good client cert succeeds, (b) known-bad client cert fails (include error text)</td>
+<td style="text-align: left;">Expected allow/deny behaviour observed</td>
+</tr>
+<tr>
+<td style="text-align: left;">Rollback readiness</td>
+<td style="text-align: left;">Proof rollback is executable within 5 minutes: automation run output <em>or</em> a non-prod rollback drill record + validated rollback artefact location</td>
+<td style="text-align: left;">Rollback path verified and time-bounded</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>If the “No restart required” artefact cannot be produced, the deployment is blocked unless an approved exception exists (documented downtime plan, compensating controls, and post-change verification).</p>
+<p><strong>Implementation hooks (where this gate lives):</strong></p>
+<ul>
+<li><p><strong>Pre-deploy (CI):</strong> run CSR/cert lint (Sections <a href="#sec:csr-lint-gate" data-reference-type="ref" data-reference="sec:csr-lint-gate">11.1</a>/<a href="#sec:cert-lint-gate" data-reference-type="ref" data-reference="sec:cert-lint-gate">11.2</a>) and chain validation against the intended trust bundle.</p></li>
+<li><p><strong>Deploy (CD):</strong> apply the secret/config change as a canary to a single defender/origin pool first.</p></li>
+<li><p><strong>Post-deploy verification (automated):</strong> run the synthetic handshake probes (Appendix <a href="#app:scripts" data-reference-type="ref" data-reference="app:scripts">20</a>) against the canary and then against full fleet; record fingerprints and success/latency metrics as evidence.</p></li>
+<li><p><strong>Continuous monitoring:</strong> keep the same probes running as SLO telemetry (Section 8.3) so the gate and monitoring use the same signals.</p></li>
+</ul>
+<p><strong>Minimum evidence artefacts (attach to the change record):</strong></p>
+<ul>
+<li><p>Pre-change and post-change served leaf fingerprint (per <code>endpoint_fqdn</code>), plus NotAfter date.</p></li>
+<li><p>Canary window metrics: handshake success rate and p95 handshake latency, with baseline window shown.</p></li>
+<li><p>Confirmation of zero restarts (pod restart count / process start time) for the terminating component.</p></li>
+<li><p>Chain validation output (<code>openssl verify</code> plus signature algorithm check) for the deployed package.</p></li>
+</ul>
+<p><strong>Rollback triggers (must be configured before change start):</strong></p>
+<ul>
+<li><p>Immediate rollback if (a) fingerprint does not change within 5 minutes, (b) handshake success <span class="math inline">\(&lt;\)</span> 99.9% for <span class="math inline">\(\geq 2\)</span> consecutive minutes, or (c) p95 handshake latency increases <span class="math inline">\(&gt;\)</span> 20% for <span class="math inline">\(\geq 5\)</span> minutes.</p></li>
+<li><p>Rollback action: redeploy the previous certificate package (leaf + full chain) and revert any associated config change; validate by fingerprint + synthetic SNI checks.</p></li>
+<li><p>Rollback RTO target: restore baseline handshake success rate within the change window (target: <span class="math inline">\(\leq 5\)</span> minutes per endpoint).</p></li>
+</ul>
+<h1 data-number="12" id="failure-mode-analysis"><span class="header-section-number">12</span> Failure Mode Analysis</h1>
+<h2 data-number="12.1" id="risk-matrix"><span class="header-section-number">12.1</span> Risk Matrix</h2>
+<p>Likelihood ratings in <a href="#tab:risk-matrix" data-reference-type="ref" data-reference="tab:risk-matrix">20</a> are not subjective priors unless labelled as such. Each value must derive from a defined measurement window and dataset. Values without measured data must be marked <em>Assumed prior (unmeasured)</em>.</p>
+<p><strong>Measurement approach:</strong></p>
+<ul>
+<li><p><strong>Observation window:</strong> trailing 12 months (or the maximum available period if less), reported with explicit start/end dates.</p></li>
+<li><p><strong>Datasets:</strong></p>
+<ul>
+<li><p>Incident tickets for Cequence/OKAPI tagged as certificate/TLS related (expiry, chain, truststore, handshake, mTLS).</p></li>
+<li><p>DCERTS availability events (vendor/outage notifications, internal incident records) and/or API error-rate telemetry (e.g., 5xx rate for <code>/cert/create</code>, <code>/cert/renew</code>, ACME order creation).</p></li>
+<li><p>Certificate inventory + automated endpoint scan results (e.g., % of endpoints within 30/14/7 days to expiry; % presenting legacy intermediates; % failing chain validation under OpenSSL 3.x).</p></li>
+</ul></li>
+<li><p><strong>Mapping to ratings:</strong> convert observed frequency into coarse bins (e.g., <em>High</em> = monthly+; <em>Medium</em> = quarterly; <em>Low</em> = annual/rare), and record the computed rate in the evidence pack.</p></li>
+</ul>
+<div id="tab:risk-matrix">
+<table>
+<caption>Certificate lifecycle risk matrix (likelihoods explicitly labelled as measured vs assumed prior).</caption>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Risk</strong></th>
+<th style="text-align: left;"><strong>Likelihood</strong></th>
+<th style="text-align: left;"><strong>Basis (evidence)</strong></th>
+<th style="text-align: left;"><strong>Impact</strong></th>
+<th style="text-align: left;"><strong>Mitigation</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Expiry-driven outage</td>
+<td style="text-align: left;">Medium</td>
+<td style="text-align: left;">No incident-rate data; requires 12-month review</td>
+<td style="text-align: left;">Critical</td>
+<td style="text-align: left;">Tiered expiry monitoring with enforced renewal targets</td>
+</tr>
+<tr>
+<td style="text-align: left;">Mis-issuance</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;">No measured rate; requires DCERTS audit + CSR lint rates</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">CSR lint gate, SAN allowlist enforcement</td>
+</tr>
+<tr>
+<td style="text-align: left;">Chain incompatibility</td>
+<td style="text-align: left;">Unknown</td>
+<td style="text-align: left;">Unmeasured; requires endpoint scan + issuer breakdown</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">Chain validation, OpenSSL 3.x testing</td>
+</tr>
+<tr>
+<td style="text-align: left;">Truststore drift</td>
+<td style="text-align: left;">Medium</td>
+<td style="text-align: left;">No drift frequency; requires snapshot diffs</td>
+<td style="text-align: left;">Medium</td>
+<td style="text-align: left;">Truststore scanning, staged rollout</td>
+</tr>
+<tr>
+<td style="text-align: left;">Secret leakage</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;">No loss-event data; requires access-log review</td>
+<td style="text-align: left;">Critical</td>
+<td style="text-align: left;">Secrets manager, access logging, rotation</td>
+</tr>
+<tr>
+<td style="text-align: left;">Key compromise</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;">No events evidenced; requires threat modelling</td>
+<td style="text-align: left;">Critical</td>
+<td style="text-align: left;">HSM/KMS, emergency rotation runbook</td>
+</tr>
+<tr>
+<td style="text-align: left;">DCERTS unavailability</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;">No uptime data; requires outage history</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">Manual fallback, retry logic</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 data-number="12.2" id="threat-model-overview"><span class="header-section-number">12.2</span> Threat Model Overview</h2>
+<p>Seven threats (T1–T7) map against three trust zones (Edge, OKAPI, PKI) and three asset types (private keys, certificates, truststores). Each threat has a corresponding control in <a href="#tab:risk-matrix" data-reference-type="ref" data-reference="tab:risk-matrix">20</a>. The full threat model diagram, covering zone boundaries, threat vectors, and control mitigations, appears in Appendix <a href="#app:threat-model" data-reference-type="ref" data-reference="app:threat-model">21</a>.</p>
+<h1 data-number="13" id="sec:runbooks"><span class="header-section-number">13</span> Operational Runbooks</h1>
+<h2 data-number="13.1" id="standard-renewal-runbook"><span class="header-section-number">13.1</span> Standard Renewal Runbook</h2>
+<ol>
+<li><p><strong>Detection (T-90 days):</strong> Receive DCERTS expiry notification; create an internal Jira issue (system-of-record) and link it to the inventory <code>record_id</code></p></li>
+<li><p><strong>Planning (T-85 days):</strong> Coordinate with OKAPI Ops to agree renewal targets and a shared change window (issuance/expiry alignment is optional); confirm independent monitoring and rollback paths. For mTLS endpoints (<code>certificate_role=client_mtls</code>), confirm that client-side certificate holders are notified and schedule coordinated rotation so that both server and client certificates are updated within the same window. <strong>MASSL coordination SLO:</strong> client-side certificate holders must confirm readiness by T-30 days; if no confirmation by T-30, escalate to L4 on-call. MASSL renewal failures are the most common coordination failure mode</p></li>
+<li><p><strong>Vendor engagement (T-75 days):</strong> If Cequence action is required, raise a Zendesk ticket / engagement-form request <strong>manually</strong> and record the vendor ticket ID back in Jira (assume no Zendesk API)</p></li>
+<li><p><strong>CSR Review (T-70 days):</strong> Validate CSR correctness via DCERTS portal; store in SharePoint CSR folder</p></li>
+<li><p><strong>Issuance (T-60 days):</strong> Submit certificate request via DCERTS; await PKI team approval</p></li>
+<li><p><strong>Staging (T-45 days):</strong> Provide the issued <em>public</em> certificate package (leaf + chain only; never private keys) to Cequence support for staging validation</p></li>
+<li><p><strong>Change Execution (T-14 days):</strong> Execute change during scheduled window; perform PVT with API consumers</p></li>
+<li><p><strong>Closure (T+1 day):</strong> Update DCERTS metadata; attach the evidence pack; refresh the certificate inventory; close tickets</p></li>
+</ol>
+<figure id="fig:seq-standard-renewal" data-latex-placement="H">
+<div class="mxgraph" style="max-width:100%;margin:16px 0;" data-mxgraph="{&quot;url&quot;: &quot;drawio/fig16_renewal_sequence.drawio&quot;, &quot;toolbar&quot;: &quot;zoom&quot;, &quot;resize&quot;: true, &quot;nav&quot;: false, &quot;border&quot;: 10, &quot;check-visible-state&quot;: false}"></div>
+
+</figure>
+<h2 data-number="13.2" id="sec:emergency-rotation"><span class="header-section-number">13.2</span> Emergency Rotation Runbook</h2>
+<ol>
+<li><p><strong>Declare incident:</strong> Scope affected endpoints by SNI, certificate fingerprint, and issuer</p></li>
+<li><p><strong>Freeze changes:</strong> Halt non-essential changes; start evidence capture</p></li>
+<li><p><strong>Generate new key:</strong> Create new key pair under approved custody model</p></li>
+<li><p><strong>Request issuance:</strong> Submit DCERTS request under approved CA profile (use emergency change template)</p></li>
+<li><p><strong>Deploy with validation:</strong> Stage and deploy with synthetic tests and monitored rollout</p></li>
+<li><p><strong>Revoke compromised:</strong> If required, revoke old certificates and update truststores</p></li>
+<li><p><strong>Post-incident review:</strong> Complete PIR; update inventory and evidence pack</p></li>
+</ol>
+<h3 data-number="13.2.1" id="dedicated-emergency-workflow-patterns-required"><span class="header-section-number">13.2.1</span> Dedicated emergency workflow patterns (required)</h3>
+<p>Emergency rotation is not a faster standard renewal. It requires dedicated workflow patterns. Teams must be able to (a) stop unsafe concurrent changes, (b) pre-populate approvals and tickets, and (c) generate a deterministic evidence pack under time pressure.</p>
+<ol>
+<li><p><strong>E1. Freeze/hold signal (change stop-the-world):</strong> Define an explicit <em>freeze signal</em> that can be asserted and observed across teams and toolchains (e.g., an “Emergency TLS Freeze” Jira label/state + a Change Advisory broadcast). Gate all certificate deployments (edge and origin) on the freeze state: only emergency-approved changes may proceed until the freeze is lifted.</p></li>
+<li><p><strong>E2. Emergency template pre-population (one-click ticketing):</strong> Maintain pre-approved emergency change templates and Jira issue templates. These must auto-populate the minimum fields required for certificate incidents: <code>endpoint_fqdn</code>, current served fingerprint, issuer chain identifiers, suspected failure mode (expiry/compromise/mis-issuance/chain), owner_team, and the required validation artefacts from Table <a href="#tab:deploy-gate" data-reference-type="ref" data-reference="tab:deploy-gate">18</a>. The template MUST include a mandatory linkage to the inventory <code>record_id</code> so alerts, tickets, and evidence remain correlated.</p></li>
+<li><p><strong>E3. Evidence-pack automation (timestamped artefacts by default):</strong> For emergency rotations, require a minimal, deterministic evidence pack that is produced automatically where possible: (a) pre-change and post-change served fingerprint + NotAfter, (b) chain lint output (<code>openssl verify</code> + SHA-1 check), (c) canary handshake success/latency window, and (d) “no restarts” proof where applicable. The evidence pack pointer is then attached to the Jira issue and referenced in the DCERTS request/change record.</p></li>
+</ol>
+<p><strong>SLO:</strong> Target 4 hours to stable state for critical incidents.</p>
+<h2 data-number="13.3" id="operational-slos"><span class="header-section-number">13.3</span> Operational SLOs</h2>
+<div id="tab:slos">
+<table style="width:92%;">
+<caption>Operational SLOs for certificate lifecycle events.</caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 24%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Classification</strong></th>
+<th style="text-align: left;"><strong>Trigger Criteria</strong></th>
+<th style="text-align: left;"><strong>Target Resolution</strong></th>
+<th style="text-align: left;"><strong>Escalation</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Urgent</td>
+<td style="text-align: left;">Expiry <span class="math inline">\(\leq\)</span> 7 days; revocation; widespread handshake failure</td>
+<td style="text-align: left;">4 hours to stable state</td>
+<td style="text-align: left;">Immediate page to L4 on-call</td>
+</tr>
+<tr>
+<td style="text-align: left;">Expedited</td>
+<td style="text-align: left;">Expiry 8–30 days</td>
+<td style="text-align: left;">10 business days to planned change</td>
+<td style="text-align: left;">Ticket to L4 queue + daily follow-up</td>
+</tr>
+<tr>
+<td style="text-align: left;">Standard</td>
+<td style="text-align: left;">Expiry 31–90 days</td>
+<td style="text-align: left;">15 business days to planned change</td>
+<td style="text-align: left;">Ticket to L4 queue</td>
+</tr>
+<tr>
+<td style="text-align: left;">Scheduled</td>
+<td style="text-align: left;">Expiry <span class="math inline">\(&gt;\)</span> 90 days</td>
+<td style="text-align: left;">Align to renewal window</td>
+<td style="text-align: left;">Backlog grooming</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 data-number="13.4" id="support-escalation-reference"><span class="header-section-number">13.4</span> Support Escalation Reference</h2>
+<p>The following escalation structure applies to Cequence certificate incidents:</p>
+<div id="tab:escalation-structure">
+<table style="width:92%;">
+<caption>Incident escalation structure for certificate lifecycle events.</caption>
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 30%" />
+<col style="width: 25%" />
+<col style="width: 28%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Tier</strong></th>
+<th style="text-align: left;"><strong>Team</strong></th>
+<th style="text-align: left;"><strong>Availability</strong></th>
+<th style="text-align: left;"><strong>Contact</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">L2</td>
+<td style="text-align: left;">Media Applications Identity Cloud Operations (MAICO)</td>
+<td style="text-align: left;">24<span class="math inline">\(\times\)</span>7</td>
+<td style="text-align: left;">Standard ServiceNow queue</td>
+</tr>
+<tr>
+<td style="text-align: left;">L3/L4</td>
+<td style="text-align: left;">SecEng</td>
+<td style="text-align: left;">Business hours; on-call for Sev 1/2</td>
+<td style="text-align: left;">1300 757 799 Option 6</td>
+</tr>
+<tr>
+<td style="text-align: left;">L5</td>
+<td style="text-align: left;">Cequence vendor support</td>
+<td style="text-align: left;">Via Zendesk</td>
+<td style="text-align: left;">helpdesk.cequence.ai</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Escalation triggers:</strong></p>
+<ul>
+<li><p><strong>L2 <span class="math inline">\(\rightarrow\)</span> L3:</strong> Certificate incident confirmed; requires SecEng expertise (key compromise suspected, CA revocation, emergency rotation)</p></li>
+<li><p><strong>L3 <span class="math inline">\(\rightarrow\)</span> L5:</strong> Defender-side action required; Cequence platform configuration change needed; or vendor-specific root cause investigation</p></li>
+</ul>
+
+<script type="text/javascript" src="https://viewer.diagrams.net/js/viewer-static.min.js"></script>
+<script defer src="assets/download-injector.js"></script>
+</body>
+</html>

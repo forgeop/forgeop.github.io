@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:#0d1117;font-family:'SF Mono',SFMono-Regular,Menlo,monospace}
+  .wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px}
+  .label{font-size:10px;color:#30363d;letter-spacing:4px;text-transform:uppercase}
+  .ref{font-size:24px;letter-spacing:6px;color:#6e7681}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="label">ref</div>
+  <div class="ref" id="r">--------</div>
+</div>
+<script>
+var s=window.location.pathname.replace(/^\/|\/$/g,'');
+if(s)document.getElementById('r').textContent=s;
+</script>
+<script src="../assets/download-injector.js?v=f7dbc51c"></script>
+</body>
+</html>

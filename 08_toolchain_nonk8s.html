@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Security Architecture and Engineering L4 SecEng Team Telstra Group" />
+  <title>Certificate Lifecycle Operating Model</title>
+  
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+
+
+<title>Toolchain and Non-Kubernetes Estate</title>
+<style>
+  :root { --text-primary: #1d1d1f; --text-secondary: #6e6e73; --text-link: #0066cc; --bg-primary: #fff; --bg-secondary: #f5f5f7; --bg-code: #f5f5f7; --border: #d2d2d7; --panel-info-bg: #e8f0fe; --panel-info-border: #4285f4; --panel-warn-bg: #fef7e0; --panel-warn-border: #f9ab00; --panel-error-bg: #fce8e6; --panel-error-border: #d93025; }
+  body { font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.52947; color: var(--text-primary); max-width: 980px; margin: 0 auto; padding: 0 22px; background: var(--bg-primary); -webkit-font-smoothing: antialiased; }
+  h1 { font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 28px; font-weight: 600; color: var(--text-primary); letter-spacing: .007em; line-height: 1.14286; margin: 40px 0 12px 0; }
+  h2 { font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 22px; font-weight: 600; color: var(--text-primary); letter-spacing: .016em; line-height: 1.18182; margin: 32px 0 8px 0; }
+  h3 { font-size: 17px; font-weight: 600; color: var(--text-primary); letter-spacing: -.022em; line-height: 1.23536; margin: 24px 0 6px 0; }
+  h4 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 16px 0 4px 0; }
+  p { margin: 8px 0; }
+  a { color: var(--text-link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 13px; }
+  th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--bg-secondary); font-weight: 600; color: var(--text-primary); }
+  tr:nth-child(even) { background: #fafafa; }
+  code { font-family: "SF Mono", SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace; font-size: 12px; background: var(--bg-code); padding: 2px 5px; border-radius: 4px; color: var(--text-primary); }
+  pre { background: var(--bg-code); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; overflow-x: auto; font-size: 12px; line-height: 1.6; }
+  pre code { background: none; padding: 0; }
+  figure { margin: 20px 0; text-align: center; }
+  figcaption { font-size: 12px; color: var(--text-secondary); margin-top: 8px; font-style: italic; line-height: 1.4; }
+  img { max-width: 100%; height: auto; border-radius: 4px; }
+  ul, ol { padding-left: 22px; margin: 8px 0; }
+  li { margin-bottom: 4px; }
+  blockquote { border-left: 3px solid var(--panel-info-border); background: var(--panel-info-bg); margin: 12px 0; padding: 12px 16px; border-radius: 0 4px 4px 0; }
+  #TOC { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 16px 22px; margin-bottom: 28px; }
+  #TOC ul { list-style: none; padding-left: 16px; }
+  #TOC > ul { padding-left: 0; }
+  #TOC a { color: var(--text-link); }
+  .header-section-number { color: var(--text-secondary); margin-right: 6px; }
+  .confluence-info-panel { border-left: 3px solid var(--panel-info-border); background: var(--panel-info-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  .confluence-warning-panel { border-left: 3px solid var(--panel-warn-border); background: var(--panel-warn-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  .confluence-error-panel { border-left: 3px solid var(--panel-error-border); background: var(--panel-error-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  nav { background: var(--bg-secondary); padding: 10px 16px; margin-bottom: 20px; border-bottom: 2px solid var(--panel-info-border); font-size: 13px; border-radius: 0; }
+  nav a { color: var(--text-link); font-weight: 500; }
+  strong { font-weight: 600; }
+  @media (max-width: 735px) { body { font-size: 14px; padding: 0 16px; } h1 { font-size: 24px; } h2 { font-size: 19px; } }
+</style>
+
+<style id="site-chrome-fix">body{padding-top:0!important}#site-header+nav,#site-header+*{margin-top:12px}</style>
+</head>
+<body>
+<nav>
+  <a href="00_parent_overview.html">^ Operating Model Home</a>
+   | <a href="07_gates_risk_runbooks.html">&lt; Gates, Risk and Runbooks</a> | <a href="09_recommendations.html">Recommendations &gt;</a>
+</nav>
+<h1 data-number="14" id="toolchain-integration"><span class="header-section-number">14</span> Toolchain Integration</h1>
+<h2 data-number="14.1" id="integration-map"><span class="header-section-number">14.1</span> Integration Map</h2>
+<div id="tab:toolchain">
+<table style="width:92%;">
+<caption>Toolchain integration map with evidence outputs.</caption>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 22%" />
+<col style="width: 28%" />
+<col style="width: 27%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Stage</strong></th>
+<th style="text-align: left;"><strong>Primary Tool</strong></th>
+<th style="text-align: left;"><strong>Evidence Output</strong></th>
+<th style="text-align: left;"><strong>Integration Point</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Detection</td>
+<td style="text-align: left;">Power Automate (email parse) + Rundeck (scheduled polling, GitLab code pull)</td>
+<td style="text-align: left;">Alert ID, impacted FQDN list, KUDOS pre-renewal risk baseline</td>
+<td style="text-align: left;">Webhook POST to Rundeck; PagerDuty escalation</td>
+</tr>
+<tr>
+<td style="text-align: left;">Triage</td>
+<td style="text-align: left;">Jira (internal SoR); Zendesk (vendor channel); Rundeck orchestration</td>
+<td style="text-align: left;">Jira key, SLA target, vendor ticket ref</td>
+<td style="text-align: left;">Rundeck <span class="math inline">\(\rightarrow\)</span> Jira API (Dinesh webhook code); manual Zendesk/engagement form</td>
+</tr>
+<tr>
+<td style="text-align: left;">Fulfilment</td>
+<td style="text-align: left;">DCERTS portal or REST API</td>
+<td style="text-align: left;">Issuance record, CA profile</td>
+<td style="text-align: left;">Manual portal workflow or DCERTS REST API (ACME once unblocked)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Risk assessment</td>
+<td style="text-align: left;">KUDOS Compare API + ORR form</td>
+<td style="text-align: left;">Risk score, ORR clearance, ORR Jira (if <span class="math inline">\(\geq 60\)</span>)</td>
+<td style="text-align: left;">Rundeck autofill via KUDOS <code>/api/compare</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Secrets</td>
+<td style="text-align: left;">AWS Secrets Manager</td>
+<td style="text-align: left;">Secret version ID</td>
+<td style="text-align: left;">External Secrets Operator</td>
+</tr>
+<tr>
+<td style="text-align: left;">Deployment</td>
+<td style="text-align: left;">Defenders, origins</td>
+<td style="text-align: left;">Deployment change record, DCERTS portal confirmation</td>
+<td style="text-align: left;">Ansible/Terraform; manual DCERTS update</td>
+</tr>
+<tr>
+<td style="text-align: left;">Verification</td>
+<td style="text-align: left;">Synthetic probes</td>
+<td style="text-align: left;">SNI success, mTLS auth logs</td>
+<td style="text-align: left;">Datadog/Prometheus</td>
+</tr>
+<tr>
+<td style="text-align: left;">Closure</td>
+<td style="text-align: left;">Evidence store + GitLab ledger</td>
+<td style="text-align: left;">Immutable evidence pack, ledger commit</td>
+<td style="text-align: left;">GitLab append-only commit; Splunk SIEM forward</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Triage system-of-record:</strong> Jira is the internal triage system-of-record; Zendesk (or Cequence engagement form) is the vendor-facing channel only.</p>
+<p><strong>Integration requirements:</strong></p>
+<ul>
+<li><p>Automation MUST NOT assume certificate issuance can be auto-approved. PKI/DCERTS remains R/A for issuance approval per Table <a href="#tab:raci-summary" data-reference-type="ref" data-reference="tab:raci-summary">14</a>.</p></li>
+<li><p>SharePoint Lists are a supplementary tracking/evidence store; triage remains Jira (internal SoR) with Zendesk as vendor channel (see Table <a href="#tab:toolchain" data-reference-type="ref" data-reference="tab:toolchain">23</a>).</p></li>
+<li><p>Automation integrates with internal Jira only (create/update/close issues, attach evidence pack refs, correlate to inventory <code>record_id</code>).</p></li>
+<li><p>No Zendesk API and no Zendesk email-to-ticket: Zendesk remains a manual handoff (create vendor ticket, paste Jira key + evidence refs; mirror vendor ticket ID back into Jira).</p></li>
+<li><p>All automation code MUST reside in GitLab with mandatory security scanning via pipeline. Rundeck pulls code from GitLab dynamically on execution; no code is embedded in the orchestration UI.</p></li>
+</ul>
+<h2 data-number="14.2" id="sec:splunk-verification"><span class="header-section-number">14.2</span> Engineering verification (Splunk cross-checks)</h2>
+<p>Operational verification must not rely on a single data plane. Verify incidents and changes using independent log/telemetry sources. This allows claims such as “handshake failures are widespread” to be validated quickly.</p>
+<p><strong>Current state:</strong> Five production Splunk indexes exist for Cequence (<code>secops-cequence-amp-detection-app</code>, <code>-mitigation-app</code>, <code>-risk-app</code>, <code>-audit-app</code>, and <code>secops-cequenceapi-app</code> for bypass healthcheck alerts). These indexes contain API security events (bot detection, mitigation actions, OWASP risk scores, authentication audit) with fields including <code>host</code>, <code>uri</code>, <code>status_code</code>, <code>transaction_id</code>, <code>client_ip</code>, and <code>fingerprint</code> (bot fingerprint, not certificate fingerprint). No certificate lifecycle telemetry (certificate fingerprint, serial, issuer, expiry, chain composition) is currently present in any Cequence Splunk index. The <code>okapi_logs</code> index exists but returns zero events; cross-team log correlation is not possible through Splunk today.</p>
+<p>Cequence defenders do forward the served public certificate (or its fingerprint) in a response header to the upstream platform. This existing data path is the lowest-effort source for building certificate telemetry: extract the certificate metadata at the defender edge, forward it via HEC to a dedicated Splunk index, and correlate against the inventory <code>record_id</code>.</p>
+<p><strong>Expectations for Splunk-backed checks:</strong></p>
+<ul>
+<li><p>Queries must be scoped by explicit time window and environment.</p></li>
+<li><p>Outputs attached to an evidence pack must include: the query text (or a hash), result count, and representative raw events.</p></li>
+<li><p>Where possible, correlate Splunk events back to the canonical object <span class="math inline">\(\mathcal{C}\)</span> and the inventory <code>record_id</code>.</p></li>
+<li><p>Until certificate telemetry is available, use the existing detection index (<code>status_code &gt;= 500</code> with <code>timechart span=15m</code>) as a proxy for TLS-related service degradation.</p></li>
+</ul>
+<h2 data-number="14.3" id="network-flows"><span class="header-section-number">14.3</span> Network Flows</h2>
+<div id="tab:network-flows">
+<table>
+<caption>Network flows for certificate automation (firewall burns required).</caption>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Source</strong></th>
+<th style="text-align: left;"><strong>Destination</strong></th>
+<th style="text-align: left;"><strong>Port</strong></th>
+<th style="text-align: left;"><strong>Protocol</strong></th>
+<th style="text-align: left;"><strong>Purpose</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Automation Platform (DCERTS REST client)</td>
+<td style="text-align: left;">PKI DCERTS</td>
+<td style="text-align: left;">443</td>
+<td style="text-align: left;">TLS 1.2+</td>
+<td style="text-align: left;">Certificate API calls</td>
+</tr>
+<tr>
+<td style="text-align: left;">DCERTS</td>
+<td style="text-align: left;">SecureAuth</td>
+<td style="text-align: left;">443</td>
+<td style="text-align: left;">TLS 1.2+</td>
+<td style="text-align: left;">Account-01 auth</td>
+</tr>
+<tr>
+<td style="text-align: left;">SecureAuth</td>
+<td style="text-align: left;">Account-01 AD</td>
+<td style="text-align: left;">443</td>
+<td style="text-align: left;">TLS 1.2+</td>
+<td style="text-align: left;">User details lookup</td>
+</tr>
+<tr>
+<td style="text-align: left;">Account-01 AD</td>
+<td style="text-align: left;">AGS</td>
+<td style="text-align: left;">443</td>
+<td style="text-align: left;">TLS 1.2+</td>
+<td style="text-align: left;">Entitlement verification</td>
+</tr>
+<tr>
+<td style="text-align: left;">cert-manager</td>
+<td style="text-align: left;">DCERTS ACME</td>
+<td style="text-align: left;">443</td>
+<td style="text-align: left;">TLS 1.2+</td>
+<td style="text-align: left;">ACME protocol (blocked today)</td>
+</tr>
+<tr>
+<td style="text-align: left;">cert-manager</td>
+<td style="text-align: left;">Auth DNS NS</td>
+<td style="text-align: left;">53</td>
+<td style="text-align: left;">DNS UPDATE</td>
+<td style="text-align: left;">RFC 2136 (once ACME unblocked)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 data-number="15" id="sec:non-k8s"><span class="header-section-number">15</span> Non-Kubernetes Estate Strategies</h1>
+<p>The implementation artefacts primarily target Kubernetes (cert-manager, operators, Secrets). For non-Kubernetes estates (VM-based workloads, legacy middleware, appliance-based terminators), the same control gates and evidence requirements apply. Only the delivery mechanism differs.</p>
+<p><strong>Control-layer equivalence:</strong></p>
+<ul>
+<li><p>The three-gate model (G1: CSR lint, G2: post-issuance validation + ORR, G3: deployment safety gate) applies identically.</p></li>
+<li><p>Inventory schema, evidence pack structure, and telemetry hooks remain the same.</p></li>
+<li><p>Split-custody boundaries and PKI/DCERTS approval routing are unchanged.</p></li>
+</ul>
+<p><strong>Delivery-layer differences:</strong></p>
+<ul>
+<li><p><strong>Secret delivery:</strong> Replace Kubernetes Secrets with HashiCorp Vault (AppRole/agent), AWS Secrets Manager, or Azure Key Vault. Ensure the same <code>tls.crt</code>/<code>tls.key</code> naming convention for portability.</p></li>
+<li><p><strong>Renewal trigger:</strong> Replace cert-manager with scheduled jobs (cron, systemd timers, or orchestrator-based) that invoke the DCERTS REST API directly or manual DCERTS workflow.</p></li>
+<li><p><strong>Deployment:</strong> Replace Kubernetes rolling updates with configuration management (Ansible, Chef, Puppet) or load-balancer drain/swap patterns.</p></li>
+<li><p><strong>Validation probes:</strong> Replace Kubernetes readiness probes with external synthetic monitors (Datadog, Prometheus blackbox exporter) targeting the same SNI/fingerprint checks.</p></li>
+</ul>
+<p>Any non-Kubernetes implementation must produce the same evidence artefacts (Table <a href="#tab:evidence-checklist-deploy-gate" data-reference-type="ref" data-reference="tab:evidence-checklist-deploy-gate">19</a>). It must also pass the same deployment safety gate (Table <a href="#tab:deploy-gate" data-reference-type="ref" data-reference="tab:deploy-gate">18</a>) before a change can close.</p>
+
+<script defer src="assets/download-injector.js"></script>
+</body>
+</html>

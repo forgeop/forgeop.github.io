@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Security Architecture and Engineering L4 SecEng Team Telstra Group" />
+  <title>Certificate Lifecycle Operating Model</title>
+  
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+
+
+<title>Compliance, Roadmap and Appendices</title>
+<style>
+  :root { --text-primary: #1d1d1f; --text-secondary: #6e6e73; --text-link: #0066cc; --bg-primary: #fff; --bg-secondary: #f5f5f7; --bg-code: #f5f5f7; --border: #d2d2d7; --panel-info-bg: #e8f0fe; --panel-info-border: #4285f4; --panel-warn-bg: #fef7e0; --panel-warn-border: #f9ab00; --panel-error-bg: #fce8e6; --panel-error-border: #d93025; }
+  body { font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.52947; color: var(--text-primary); max-width: 980px; margin: 0 auto; padding: 0 22px; background: var(--bg-primary); -webkit-font-smoothing: antialiased; }
+  h1 { font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 28px; font-weight: 600; color: var(--text-primary); letter-spacing: .007em; line-height: 1.14286; margin: 40px 0 12px 0; }
+  h2 { font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 22px; font-weight: 600; color: var(--text-primary); letter-spacing: .016em; line-height: 1.18182; margin: 32px 0 8px 0; }
+  h3 { font-size: 17px; font-weight: 600; color: var(--text-primary); letter-spacing: -.022em; line-height: 1.23536; margin: 24px 0 6px 0; }
+  h4 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 16px 0 4px 0; }
+  p { margin: 8px 0; }
+  a { color: var(--text-link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 13px; }
+  th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--bg-secondary); font-weight: 600; color: var(--text-primary); }
+  tr:nth-child(even) { background: #fafafa; }
+  code { font-family: "SF Mono", SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace; font-size: 12px; background: var(--bg-code); padding: 2px 5px; border-radius: 4px; color: var(--text-primary); }
+  pre { background: var(--bg-code); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; overflow-x: auto; font-size: 12px; line-height: 1.6; }
+  pre code { background: none; padding: 0; }
+  figure { margin: 20px 0; text-align: center; }
+  figcaption { font-size: 12px; color: var(--text-secondary); margin-top: 8px; font-style: italic; line-height: 1.4; }
+  img { max-width: 100%; height: auto; border-radius: 4px; }
+  ul, ol { padding-left: 22px; margin: 8px 0; }
+  li { margin-bottom: 4px; }
+  blockquote { border-left: 3px solid var(--panel-info-border); background: var(--panel-info-bg); margin: 12px 0; padding: 12px 16px; border-radius: 0 4px 4px 0; }
+  #TOC { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 16px 22px; margin-bottom: 28px; }
+  #TOC ul { list-style: none; padding-left: 16px; }
+  #TOC > ul { padding-left: 0; }
+  #TOC a { color: var(--text-link); }
+  .header-section-number { color: var(--text-secondary); margin-right: 6px; }
+  .confluence-info-panel { border-left: 3px solid var(--panel-info-border); background: var(--panel-info-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  .confluence-warning-panel { border-left: 3px solid var(--panel-warn-border); background: var(--panel-warn-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  .confluence-error-panel { border-left: 3px solid var(--panel-error-border); background: var(--panel-error-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  nav { background: var(--bg-secondary); padding: 10px 16px; margin-bottom: 20px; border-bottom: 2px solid var(--panel-info-border); font-size: 13px; border-radius: 0; }
+  nav a { color: var(--text-link); font-weight: 500; }
+  strong { font-weight: 600; }
+  @media (max-width: 735px) { body { font-size: 14px; padding: 0 16px; } h1 { font-size: 24px; } h2 { font-size: 19px; } }
+</style>
+
+<style id="site-chrome-fix">body{padding-top:0!important}#site-header+nav,#site-header+*{margin-top:12px}</style>
+</head>
+<body>
+<nav>
+  <a href="00_parent_overview.html">^ Operating Model Home</a>
+   | <a href="09_recommendations.html">&lt; Recommendations</a>
+</nav>
+<h1 data-number="17" id="compliance-considerations"><span class="header-section-number">17</span> Compliance Considerations</h1>
+<h2 data-number="17.1" id="software-licensing"><span class="header-section-number">17.1</span> Software Licensing</h2>
+<ul>
+<li><p><strong>cert-manager:</strong> Apache 2.0 licence (FOSS-compliant)</p></li>
+<li><p><strong>HashiCorp Vault:</strong> Not managed by this operating model. If adopted by Cequence Ops or OKAPI Ops, licence terms vary by edition; confirm with Procurement/Legal.</p></li>
+<li><p><strong>AppViewX (DCERTS):</strong> Commercial licence (managed by PKI team)</p></li>
+<li><p><strong>OpenSSL:</strong> Apache 2.0 licence for v3.x</p></li>
+</ul>
+<h2 data-number="17.2" id="export-control"><span class="header-section-number">17.2</span> Export Control</h2>
+<p>Private key operations and cryptographic tooling distribution may trigger export controls:</p>
+<ul>
+<li><p><strong>Australian-hosted key operations:</strong> Perform key generation, storage, and all private key operations (e.g., TLS handshakes) only in Australian-resident environments (cloud AU regions or Australian on-premises). Confirm compliance by identifying and evidencing all termination points for each traffic path before making non-compliance determinations.</p></li>
+<li><p><strong>Termination mapping:</strong> For each customer-facing <code>endpoint_fqdn</code>, document where TLS terminates for every connection leg: (a) consumer <span class="math inline">\(\rightarrow\)</span> defender, (b) defender <span class="math inline">\(\rightarrow\)</span> upstream (SaaS or multi-cloud origin), and (c) any intermediate hops performing TLS termination (CDN/WAF, LB, reverse proxy, service mesh, managed gateway). The evidence pack must include region/site identifiers and the terminating component identity. Include a reproducible handshake test showing the served certificate chain and fingerprint (see Appendix <a href="#app:evidence" data-reference-type="ref" data-reference="app:evidence">22</a>).</p></li>
+<li><p><strong>Roadmap compatibility:</strong> The multi-cloud roadmap (AWS <span class="math inline">\(\rightarrow\)</span> Azure <span class="math inline">\(\rightarrow\)</span> on-prem) is compatible with this constraint only when each phase is AU-hosted with supporting evidence (region/site, tenancy, replication/backups/log sinks, and DR design). Where an upstream SaaS terminates TLS outside Australia, or the termination location cannot be evidenced, treat it as an open constraint. Resolve it only after Legal/Compliance and architecture define the acceptable pattern.</p></li>
+<li><p><strong>No cross-cloud private key movement:</strong> Do not export or transfer production private key material between clouds/tenancies/regions. Cross-cloud migration requires generating a <strong>new key</strong> in the target environment and re-issuing the certificate (CSR submitted to DCERTS), not moving an existing private key.</p></li>
+<li><p>Classify automation artefacts under ECCN 5D002 or EAR99 as appropriate</p></li>
+<li><p>Vendor support access to key material may breach contractual controls</p></li>
+</ul>
+<h2 data-number="17.3" id="data-residency"><span class="header-section-number">17.3</span> Data Residency</h2>
+<ul>
+<li><p><strong>Production private keys:</strong> Australian-resident HSM/KMS/Vault (no cross-region replication; backups and audit logs retained in Australia).</p></li>
+<li><p><strong>Roadmap evidence requirement:</strong> For each secrets-platform phase (AWS EKS, Azure, on-prem), explicitly record the hosting location (region/site) and demonstrate it is AU-resident <em>before</em> storing/operating on production private keys.</p></li>
+<li><p>Evidence packs: Controlled repository with retention and legal hold support</p></li>
+<li><p>EAB and TSIG secrets: Australian-resident secrets platform</p></li>
+</ul>
+<h1 data-number="18" id="delivery-roadmap"><span class="header-section-number">18</span> Delivery Roadmap</h1>
+<div id="tab:roadmap">
+<table style="width:93%;">
+<caption>Prioritised delivery roadmap.</caption>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Timeframe</strong></th>
+<th style="text-align: left;"><strong>Deliverables</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Immediate (0–4 weeks)</td>
+<td style="text-align: left;"><div class="minipage">
+<ul>
+<li><p>Implement CSR/cert validation shell scripts</p></li>
+<li><p>Define minimum evidence pack; update ticket templates</p></li>
+<li><p>Escalate DCERTS ACME blocker to vendor</p></li>
+<li><p>Complete CA due diligence for Amazon Trust Services (ACM); add to trust anchor allowlist as Tier 2</p></li>
+</ul>
+</div></td>
+</tr>
+<tr>
+<td style="text-align: left;">Near term (1–3 months)</td>
+<td style="text-align: left;"><div class="minipage">
+<ul>
+<li><p>Build orchestration workflow around existing issuance process</p></li>
+<li><p>Add truststore hygiene checks</p></li>
+<li><p>Implement certificate expiry telemetry with alerting</p></li>
+<li><p>Document emergency rotation runbook</p></li>
+<li><p>Deploy ORR gate in advisory mode (log risk scores, do not block) for one renewal cycle</p></li>
+<li><p>Validate ACM delegation on a single non-production defender endpoint</p></li>
+<li><p>Enforce domain allowlist in CSR lint gate; pilot NGINX location block routing on one custom domain</p></li>
+</ul>
+</div></td>
+</tr>
+<tr>
+<td style="text-align: left;">Medium term (3–9 months)</td>
+<td style="text-align: left;"><div class="minipage">
+<ul>
+<li><p>Pilot ACME automation (pending vendor fix)</p></li>
+<li><p>Automate certificate distribution to Cequence support</p></li>
+<li><p>Implement emergency rotation templates with tested drills</p></li>
+<li><p>Begin Vault (ESM) Phase 2 integration</p></li>
+<li><p>Promote ORR gate to blocking mode; integrate KUDOS Compare API into production renewal workflow</p></li>
+<li><p>Extend NGINX custom domain routing to production defenders (per-API, incremental)</p></li>
+</ul>
+</div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 data-number="19" id="conclusion"><span class="header-section-number">19</span> Conclusion</h1>
+<p>Certificate lifecycle management in split custody environments demands systematic engineering. Manual workflows create operational risk through coordination gaps, validation inconsistencies, and fragmented secrets management.</p>
+<p>Five findings emerge from this analysis:</p>
+<ol>
+<li><p>The DCERTS ACME integration is blocked by a server-side error requiring vendor resolution</p></li>
+<li><p>Split-custody coordination between Cequence and OKAPI teams lacks automation</p></li>
+<li><p>Control gates for CSR validation, chain building, and deployment verification are manual or absent</p></li>
+<li><p>Secrets are distributed across multiple stores without unified governance</p></li>
+<li><p>Non-Telstra CA onboarding and custom domain enablement lack formal controls; this analysis defines a trust anchor allowlist, domain authorisation lifecycle, tiered governance framework, and Operational Readiness Review (ORR) gate to close these gaps</p></li>
+</ol>
+<p>The recommended path forward prioritises:</p>
+<ol>
+<li><p>Establishing a certificate inventory and transitioning it to an authoritative source of truth once integrity controls are operating</p></li>
+<li><p>Implementing deterministic validation gates</p></li>
+<li><p>Pre-approving emergency change templates</p></li>
+<li><p>Resolving DCERTS ACME blocker to enable automation</p></li>
+<li><p>Confirming secrets management custody boundaries with vendor and OKAPI teams</p></li>
+<li><p>Deploying the ORR gate and trust anchor allowlist to enable non-Telstra CA onboarding (R6), starting with ACM delegation for vendor-managed certificates</p></li>
+<li><p>Operationalising domain authorisation for custom domain routing (R7), phased from Telstra-owned domains to BYO domains</p></li>
+</ol>
+<p>This roadmap moves the operating model toward higher automation and auditability, within split custody and DCERTS constraints. Telecommunications regulatory requirements apply when validated by Legal/Compliance and backed by a service-specific evidence pack.</p>
+<h1 class="unnumbered" id="references">References</h1>
+<div class="enumerate">
+<p>R. Chandramouli, “NIST Special Publication 800-204: Security Strategies for Microservices-based Application Systems,” National Institute of Standards and Technology, August 2019.</p>
+<p>R. Chandramouli and Z. Butcher, “NIST Special Publication 800-204A: Building Secure Microservices-based Applications Using Service-Mesh Architecture,” National Institute of Standards and Technology, May 2020.</p>
+<p>R. Chandramouli, Z. Butcher and A. Chetal, “NIST Special Publication 800-204B: Attribute-based Access Control for Microservices-based Application Systems using a Service Mesh,” National Institute of Standards and Technology, August 2021.</p>
+<p>R. Chandramouli, “NIST Special Publication 800-204C: Implementation of DevSecOps for a Microservices-based Application with Service Mesh,” National Institute of Standards and Technology, March 2022.</p>
+<p>ISO/IEC, “ISO/IEC 27001:2022 — Information security management systems — Requirements,” International Organization for Standardization, October 2022.</p>
+<p>ISO/IEC, “ISO/IEC 27002:2022 — Information security, cybersecurity and privacy protection — Information security controls,” International Organization for Standardization, February 2022.</p>
+<p>R. Barnes, J. Hoffman-Andrews, D. McCarney, and J. Kasten, “RFC 8555: Automatic Certificate Management Environment (ACME),” Internet Engineering Task Force, March 2019.</p>
+<p>P. Vixie, S. Thomson, Y. Rekhter, and J. Bound, “RFC 2136: Dynamic Updates in the Domain Name System (DNS UPDATE),” Internet Engineering Task Force, April 1997.</p>
+<p>D. Cooper, S. Santesson, S. Farrell, S. Boeyen, R. Housley, and W. Polk, “RFC 5280: Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile,” Internet Engineering Task Force, May 2008.</p>
+<p>S. Santesson, M. Myers, R. Ankney, A. Malpani, S. Galperin, and C. Adams, “RFC 6960: X.509 Internet Public Key Infrastructure Online Certificate Status Protocol — OCSP,” Internet Engineering Task Force, June 2013.</p>
+<p>J. G<span>ö</span>ppert, A. Walz and A. Sikora, “A Survey on Life-Cycle-Oriented Certificate Management in Industrial Networking Environments,” <em>J. Sens. Actuator Netw.</em>, vol. 13, no. 26, 2024. DOI: <a href="https://doi.org/10.3390/jsan13020026">10.3390/jsan13020026</a>.</p>
+<p>Telstra Internal, “Certificate Automation POC — ORCHaaS cert-manager integration with DCERTS,” Network Orchestration and Inventory, May 2025.</p>
+<p>Telstra Internal, “KUDOS Certificate Automation Solution — auto-cert-operator technical design,” Digital Services, 2024. <em>(Evaluated and ruled out: native K8s Secrets output incurs unnecessary operational overhead for AWS SaaS platforms.)</em></p>
+<p>Telstra Internal, “Enterprise Secrets Management (ESM) Business Requirements Document,” Cyber Security / Security Engineering, June 2023.</p>
+<p>Telstra Internal, <em>incident management process.pdf</em> (internal incident management process document).</p>
+<p>Telstra Internal, <em>example_splunk.txt</em> (representative Splunk query output used for engineering verification).</p>
+</div>
+<h1 class="unnumbered" id="sec:glossary">Glossary</h1>
+<table style="width:95%;">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 73%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Term</strong></th>
+<th style="text-align: left;"><strong>Definition</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">ABAC</td>
+<td style="text-align: left;">Attribute-Based Access Control (authorisation model using subject/resource/action/environment attributes)</td>
+</tr>
+<tr>
+<td style="text-align: left;">ACME</td>
+<td style="text-align: left;">Automated Certificate Management Environment (RFC 8555)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Canary</td>
+<td style="text-align: left;">Limited deployment (subset of traffic/endpoints) to validate changes before full rollout; failures trigger automatic rollback</td>
+</tr>
+<tr>
+<td style="text-align: left;">Custody</td>
+<td style="text-align: left;">Operational ownership of cryptographic material (private keys); in split custody, Cequence Ops and OKAPI Ops each own independent keys</td>
+</tr>
+<tr>
+<td style="text-align: left;">Defender</td>
+<td style="text-align: left;">Cequence component that terminates TLS and provides API security (bot detection, rate limiting); deployed as AWS SaaS</td>
+</tr>
+<tr>
+<td style="text-align: left;">AGS</td>
+<td style="text-align: left;">Access Governance System (Telstra entitlement management)</td>
+</tr>
+<tr>
+<td style="text-align: left;">AIA</td>
+<td style="text-align: left;">Authority Information Access (X.509 extension specifying CA issuer and OCSP responder URLs)</td>
+</tr>
+<tr>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">Certificate Authority</td>
+</tr>
+<tr>
+<td style="text-align: left;">CAD</td>
+<td style="text-align: left;">Change Activity Definition</td>
+</tr>
+<tr>
+<td style="text-align: left;">CN</td>
+<td style="text-align: left;">Common Name (X.509 subject field)</td>
+</tr>
+<tr>
+<td style="text-align: left;">CRQ</td>
+<td style="text-align: left;">Change Request (ITSM terminology)</td>
+</tr>
+<tr>
+<td style="text-align: left;">CSR</td>
+<td style="text-align: left;">Certificate Signing Request (PKCS#10)</td>
+</tr>
+<tr>
+<td style="text-align: left;">CRL</td>
+<td style="text-align: left;">Certificate Revocation List (X.509 mechanism for publishing revoked certificates; see RFC 5280)</td>
+</tr>
+<tr>
+<td style="text-align: left;">DCERTS</td>
+<td style="text-align: left;">Telstra PKI portal (AppViewX-based)</td>
+</tr>
+<tr>
+<td style="text-align: left;">EAB</td>
+<td style="text-align: left;">External Account Binding (ACME authentication)</td>
+</tr>
+<tr>
+<td style="text-align: left;">EKS</td>
+<td style="text-align: left;">Amazon Elastic Kubernetes Service (AWS-managed Kubernetes control plane)</td>
+</tr>
+<tr>
+<td style="text-align: left;">EKU</td>
+<td style="text-align: left;">Extended Key Usage (X.509 extension)</td>
+</tr>
+<tr>
+<td style="text-align: left;">ESM</td>
+<td style="text-align: left;">Enterprise Secrets Management (HashiCorp Vault platform)</td>
+</tr>
+<tr>
+<td style="text-align: left;">FQDN</td>
+<td style="text-align: left;">Fully Qualified Domain Name</td>
+</tr>
+<tr>
+<td style="text-align: left;">Gate</td>
+<td style="text-align: left;">Mandatory checkpoint in the certificate lifecycle; must pass before the next phase can begin; produces evidence and enforces policy</td>
+</tr>
+<tr>
+<td style="text-align: left;">GRC</td>
+<td style="text-align: left;">Governance, Risk, and Compliance (policy baseline, risk acceptance, audit/compliance validation)</td>
+</tr>
+<tr>
+<td style="text-align: left;">HSM</td>
+<td style="text-align: left;">Hardware Security Module</td>
+</tr>
+<tr>
+<td style="text-align: left;">KMS</td>
+<td style="text-align: left;">Key Management Service</td>
+</tr>
+<tr>
+<td style="text-align: left;">L3/L4/L5</td>
+<td style="text-align: left;">Engineering support tiers: L3 (application support), L4 (platform/infrastructure), L5 (architecture/principal)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Lint</td>
+<td style="text-align: left;">Automated static analysis of certificates or CSRs to detect policy violations (weak keys, prohibited algorithms, SAN mismatches)</td>
+</tr>
+<tr>
+<td style="text-align: left;">KUDOS</td>
+<td style="text-align: left;">Kubernetes Digital Orchestrated Services (Telstra platform); ruled out for Cequence (K8s Secrets output incurs unnecessary operational overhead for AWS SaaS)</td>
+</tr>
+<tr>
+<td style="text-align: left;">mTLS</td>
+<td style="text-align: left;">Mutual TLS (client and server authentication)</td>
+</tr>
+<tr>
+<td style="text-align: left;">OKAPI</td>
+<td style="text-align: left;">Telstra API gateway platform</td>
+</tr>
+<tr>
+<td style="text-align: left;">ORCHaaS</td>
+<td style="text-align: left;">Orchestration as a Service (Telstra platform)</td>
+</tr>
+<tr>
+<td style="text-align: left;">PEM</td>
+<td style="text-align: left;">Privacy-Enhanced Mail (Base64-encoded format for certificates and keys; commonly used file extension)</td>
+</tr>
+<tr>
+<td style="text-align: left;">RACI</td>
+<td style="text-align: left;">Responsibility assignment matrix: Responsible, Accountable, Consulted, Informed</td>
+</tr>
+<tr>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Production Verification Testing</td>
+</tr>
+<tr>
+<td style="text-align: left;">RFC 2136</td>
+<td style="text-align: left;">DNS dynamic update protocol (TSIG authentication)</td>
+</tr>
+<tr>
+<td style="text-align: left;">SecEng</td>
+<td style="text-align: left;">Security Engineering (L4 team responsible for certificate lifecycle coordination, control design, and audit oversight)</td>
+</tr>
+<tr>
+<td style="text-align: left;">SAN</td>
+<td style="text-align: left;">Subject Alternative Name (X.509 extension)</td>
+</tr>
+<tr>
+<td style="text-align: left;">SNI</td>
+<td style="text-align: left;">Server Name Indication (TLS extension allowing multiple certificates on one IP)</td>
+</tr>
+<tr>
+<td style="text-align: left;">SoR</td>
+<td style="text-align: left;">System of Record (authoritative data source for a given domain; Jira for triage, DCERTS for issuance)</td>
+</tr>
+<tr>
+<td style="text-align: left;">SPKI</td>
+<td style="text-align: left;">Subject Public Key Info (X.509 structure containing algorithm identifier and public key; used for certificate pinning)</td>
+</tr>
+<tr>
+<td style="text-align: left;">STAC</td>
+<td style="text-align: left;">(AWS-based certificate management under evaluation)</td>
+</tr>
+<tr>
+<td style="text-align: left;">TSIG</td>
+<td style="text-align: left;">Transaction Signature (DNS authentication)</td>
+</tr>
+</tbody>
+</table>
+<h1 data-number="20" id="app:scripts"><span class="header-section-number">20</span> Validation Scripts</h1>
+<p>Validation scripts are maintained in GitLab and should be executed as probes by the monitoring stack. The scripts below are reference implementations; canonical versions live in the automation repository.</p>
+<table style="width:92%;">
+<caption>Validation script reference.</caption>
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 38%" />
+<col style="width: 26%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Script</strong></th>
+<th style="text-align: left;"><strong>Purpose</strong></th>
+<th style="text-align: left;"><strong>Key checks</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>validate-chain.sh</code></td>
+<td style="text-align: left;">Certificate chain validation and lint</td>
+<td style="text-align: left;">Chain build, SHA-1 detection, intermediate expiry, AIA/CRL reachability, key strength</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>test-handshake.sh</code></td>
+<td style="text-align: left;">TLS handshake and certificate presentation</td>
+<td style="text-align: left;">TLS 1.2/1.3 support, served chain, expiry countdown</td>
+</tr>
+</tbody>
+</table>
+<h1 data-number="21" id="app:threat-model"><span class="header-section-number">21</span> Threat Model Diagram</h1>
+<figure id="fig:threat-model" data-latex-placement="H">
+<div class="mxgraph" style="max-width:100%;margin:16px 0;" data-mxgraph="{&quot;url&quot;: &quot;drawio/fig17_threat_model.drawio&quot;, &quot;toolbar&quot;: &quot;zoom&quot;, &quot;resize&quot;: true, &quot;nav&quot;: false, &quot;border&quot;: 10, &quot;check-visible-state&quot;: false}"></div>
+
+</figure>
+<h1 data-number="22" id="app:evidence"><span class="header-section-number">22</span> Evidence Artefacts (Representative Examples)</h1>
+<p>This appendix provides representative examples of the <em>evidence artefacts</em> that should exist to support high-stakes assertions in this operating model. Where values are environment-specific or sensitive, examples are anonymised; teams should replace these with real extracts from DCERTS exports, endpoint scans, and truststore diffs.</p>
+<h2 data-number="22.1" id="expiry-date-drift-evidence-split-custody"><span class="header-section-number">22.1</span> Expiry Date Drift Evidence (Split-Custody)</h2>
+<div id="tab:evidence-drift">
+<table>
+<caption>Representative examples showing Cequence vs OKAPI NotAfter drift for the same customer-facing FQDN (anonymised).</caption>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>endpoint_fqdn</strong></th>
+<th style="text-align: left;"><strong>Cequence</strong></th>
+<th style="text-align: left;"><strong>OKAPI</strong></th>
+<th style="text-align: left;"><strong>drift</strong></th>
+<th style="text-align: left;"><strong>note</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">api.example.tld</td>
+<td style="text-align: left;">2025-10-01</td>
+<td style="text-align: left;">2025-10-05</td>
+<td style="text-align: left;">+4d</td>
+<td style="text-align: left;">Misaligned issuance window</td>
+</tr>
+<tr>
+<td style="text-align: left;">partner.example.tld</td>
+<td style="text-align: left;">2025-11-12</td>
+<td style="text-align: left;">2025-11-15</td>
+<td style="text-align: left;">+3d</td>
+<td style="text-align: left;">OKAPI renewed later</td>
+</tr>
+<tr>
+<td style="text-align: left;">svc.example.tld</td>
+<td style="text-align: left;">2026-01-20</td>
+<td style="text-align: left;">2026-01-25</td>
+<td style="text-align: left;">+5d</td>
+<td style="text-align: left;">Customer change-window</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Minimum supporting artefacts to attach to the evidence pack:</strong></p>
+<ul>
+<li><p>DCERTS export for Cequence-issued leaf (serial, NotBefore, NotAfter)</p></li>
+<li><p>DCERTS export for OKAPI-issued leaf (serial, NotBefore, NotAfter)</p></li>
+<li><p>Inventory rows showing <code>certificate_role</code> values <code>server_edge</code> and <code>server_origin</code> with the same <code>endpoint_fqdn</code></p></li>
+</ul>
+<h2 data-number="22.2" id="tls-termination-mapping-evidence-residency-export-control"><span class="header-section-number">22.2</span> TLS Termination Mapping Evidence (Residency / Export-Control)</h2>
+<p>This evidence is the missing link between the residency/export-control stance and the split custody flow diagrams: it demonstrates <em>where private-key operations actually occur</em> for each endpoint.</p>
+<div id="tab:evidence-termination-map">
+<table>
+<caption>TLS termination mapping evidence template (populate per real endpoint).</caption>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>endpoint_fqdn</strong></th>
+<th style="text-align: left;"><strong>leg</strong></th>
+<th style="text-align: left;"><strong>terminator</strong></th>
+<th style="text-align: left;"><strong>region</strong></th>
+<th style="text-align: left;"><strong>leaf fp</strong></th>
+<th style="text-align: left;"><strong>evidence ref</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">api.example.tld</td>
+<td style="text-align: left;">edge</td>
+<td style="text-align: left;">Cequence defender</td>
+<td style="text-align: left;">AU-*</td>
+<td style="text-align: left;">SHA256:...</td>
+<td style="text-align: left;">probe log + config</td>
+</tr>
+<tr>
+<td style="text-align: left;">api.example.tld</td>
+<td style="text-align: left;">origin</td>
+<td style="text-align: left;">OKAPI SaaS gateway</td>
+<td style="text-align: left;">UNKNOWN</td>
+<td style="text-align: left;">SHA256:...</td>
+<td style="text-align: left;">vendor attestation</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Minimum supporting artefacts per row:</strong></p>
+<ul>
+<li><p>A reproducible TLS handshake probe output (date/time, SNI, served leaf subject/issuer, fingerprint)</p></li>
+<li><p>Control-plane evidence identifying the terminating component and its hosting location (region/site)</p></li>
+<li><p>Where the upstream is SaaS: vendor documentation/attestation identifying termination geography, plus the probe output showing the served cert</p></li>
+</ul>
+<p><strong>Note:</strong> SHA-1 chain incompatibility reproducers and truststore drift snapshot scripts are maintained in GitLab alongside the validation scripts referenced in Appendix <a href="#app:scripts" data-reference-type="ref" data-reference="app:scripts">20</a>.</p>
+
+<script type="text/javascript" src="https://viewer.diagrams.net/js/viewer-static.min.js"></script>
+<script defer src="assets/download-injector.js"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<mxfile host="draw.io">
+  <diagram name="Fig 9 – ACME Flow (Blocked)" id="fig09">
+    <mxGraphModel dx="650" dy="340" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="650" pageHeight="340" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- cert-manager -->
+        <mxCell id="cm" value="&lt;b&gt;cert-manager&lt;/b&gt;&lt;br&gt;(Kubernetes)" style="html=1;rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#EEEEFF;strokeColor=#5856D6;whiteSpace=wrap;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="20" y="40" width="160" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="cm_label" value="&lt;font color=&quot;#86868B&quot;&gt;TARGET STATE&lt;/font&gt;" style="text;html=1;fontFamily=Helvetica Neue;fontSize=10;align=center;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="50" y="100" width="100" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- ACME server -->
+        <mxCell id="acme" value="&lt;b&gt;ACME Server&lt;/b&gt;&lt;br&gt;(DCERTS)" style="html=1;rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#E5F0FF;strokeColor=#007AFF;whiteSpace=wrap;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="250" y="40" width="160" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="acme_label" value="&lt;b&gt;&lt;font color=&quot;#FF3B30&quot;&gt;BLOCKED&lt;/font&gt;&lt;/b&gt;" style="text;html=1;fontFamily=Helvetica Neue;fontSize=10;align=center;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="280" y="100" width="100" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- Enterprise CA -->
+        <mxCell id="ca" value="&lt;b&gt;Enterprise CA&lt;/b&gt;" style="html=1;rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#E8F9ED;strokeColor=#34C759;whiteSpace=wrap;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="470" y="40" width="150" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="ca_label" value="&lt;font color=&quot;#34C759&quot;&gt;OPERATIONAL&lt;/font&gt;" style="text;html=1;fontFamily=Helvetica Neue;fontSize=10;align=center;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="495" y="100" width="100" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- DNS -->
+        <mxCell id="dns" value="&lt;b&gt;DNS RFC 2136&lt;/b&gt;&lt;br&gt;TSIG" style="html=1;rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#E5F6FE;strokeColor=#5AC8FA;whiteSpace=wrap;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="20" y="180" width="150" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Blocker box -->
+        <mxCell id="blocker" value="&lt;b&gt;Current blocker&lt;/b&gt;&lt;br&gt;HTTP 500 on order creation&lt;br&gt;(ACME createOrder)" style="html=1;rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#FFE5E3;strokeColor=#FF3B30;whiteSpace=wrap;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="280" y="170" width="200" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- Arrows -->
+        <mxCell id="f1" value="newOrder" style="html=1;fontFamily=Helvetica Neue;fontColor=#1D1D1F;fontSize=10;strokeColor=#007AFF;strokeWidth=2;endArrow=blockThin;endSize=6;" edge="1" source="cm" target="acme" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f2" value="issues / records" style="html=1;fontFamily=Helvetica Neue;fontColor=#1D1D1F;fontSize=10;strokeColor=#C7C7CC;strokeWidth=1.5;endArrow=blockThin;endSize=6;" edge="1" source="acme" target="ca" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f3" value="updates TXT" style="html=1;fontFamily=Helvetica Neue;fontColor=#1D1D1F;fontSize=10;strokeColor=#C7C7CC;strokeWidth=1.5;endArrow=blockThin;endSize=6;" edge="1" source="cm" target="dns" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="f4" value="" style="html=1;fontFamily=Helvetica Neue;strokeColor=#FF3B30;strokeWidth=1.5;endArrow=blockThin;endSize=6;dashed=1;" edge="1" source="cm" target="blocker" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

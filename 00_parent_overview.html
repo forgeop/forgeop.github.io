@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Security Architecture and Engineering L4 SecEng Team Telstra Group" />
+  <title>Certificate Lifecycle Operating Model</title>
+  
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+
+
+<title>Certificate Lifecycle Operating Model</title>
+<style>
+  :root { --text-primary: #1d1d1f; --text-secondary: #6e6e73; --text-link: #0066cc; --bg-primary: #fff; --bg-secondary: #f5f5f7; --bg-code: #f5f5f7; --border: #d2d2d7; --panel-info-bg: #e8f0fe; --panel-info-border: #4285f4; --panel-warn-bg: #fef7e0; --panel-warn-border: #f9ab00; --panel-error-bg: #fce8e6; --panel-error-border: #d93025; }
+  body { font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.52947; color: var(--text-primary); max-width: 980px; margin: 0 auto; padding: 0 22px; background: var(--bg-primary); -webkit-font-smoothing: antialiased; }
+  h1 { font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 28px; font-weight: 600; color: var(--text-primary); letter-spacing: .007em; line-height: 1.14286; margin: 40px 0 12px 0; }
+  h2 { font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 22px; font-weight: 600; color: var(--text-primary); letter-spacing: .016em; line-height: 1.18182; margin: 32px 0 8px 0; }
+  h3 { font-size: 17px; font-weight: 600; color: var(--text-primary); letter-spacing: -.022em; line-height: 1.23536; margin: 24px 0 6px 0; }
+  h4 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 16px 0 4px 0; }
+  p { margin: 8px 0; }
+  a { color: var(--text-link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 13px; }
+  th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--bg-secondary); font-weight: 600; color: var(--text-primary); }
+  tr:nth-child(even) { background: #fafafa; }
+  code { font-family: "SF Mono", SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace; font-size: 12px; background: var(--bg-code); padding: 2px 5px; border-radius: 4px; color: var(--text-primary); }
+  pre { background: var(--bg-code); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; overflow-x: auto; font-size: 12px; line-height: 1.6; }
+  pre code { background: none; padding: 0; }
+  figure { margin: 20px 0; text-align: center; }
+  figcaption { font-size: 12px; color: var(--text-secondary); margin-top: 8px; font-style: italic; line-height: 1.4; }
+  img { max-width: 100%; height: auto; border-radius: 4px; }
+  ul, ol { padding-left: 22px; margin: 8px 0; }
+  li { margin-bottom: 4px; }
+  blockquote { border-left: 3px solid var(--panel-info-border); background: var(--panel-info-bg); margin: 12px 0; padding: 12px 16px; border-radius: 0 4px 4px 0; }
+  #TOC { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 16px 22px; margin-bottom: 28px; }
+  #TOC ul { list-style: none; padding-left: 16px; }
+  #TOC > ul { padding-left: 0; }
+  #TOC a { color: var(--text-link); }
+  .header-section-number { color: var(--text-secondary); margin-right: 6px; }
+  .confluence-info-panel { border-left: 3px solid var(--panel-info-border); background: var(--panel-info-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  .confluence-warning-panel { border-left: 3px solid var(--panel-warn-border); background: var(--panel-warn-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  .confluence-error-panel { border-left: 3px solid var(--panel-error-border); background: var(--panel-error-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  nav { background: var(--bg-secondary); padding: 10px 16px; margin-bottom: 20px; border-bottom: 2px solid var(--panel-info-border); font-size: 13px; border-radius: 0; }
+  nav a { color: var(--text-link); font-weight: 500; }
+  strong { font-weight: 600; }
+  @media (max-width: 735px) { body { font-size: 14px; padding: 0 16px; } h1 { font-size: 24px; } h2 { font-size: 19px; } }
+</style>
+
+<style id="site-chrome-fix">body{padding-top:0!important}#site-header+nav,#site-header+*{margin-top:12px}</style>
+</head>
+<body>
+<nav>
+  <a href="00_parent_overview.html">^ Operating Model Home</a>
+   | <a href="01_control_system_framework.html">Control System Framework &gt;</a>
+</nav>
+
+<header id="title-block-header">
+<h1 class="title">Certificate Lifecycle Operating Model</h1>
+<p class="author"><strong>Security Architecture and Engineering</strong><br />
+L4 SecEng Team<br />
+Telstra Group</p>
+<p class="date">29 January 2026 Version 2.0</p>
+<div class="abstract">
+<div class="abstract-title">Abstract</div>
+<p>This paper presents a certificate lifecycle operating model for Cequence API defenders in a split custody TLS environment. Five outage-driving failure modes (expiry, chain incompatibility, truststore drift, mis-issuance, key compromise) are analysed and translated into a three-gate control model with evidence requirements and repeatable runbooks. The model introduces an Operational Readiness Review (ORR) gate that uses risk scoring to govern deployment decisions. Technical artefacts include an inventory schema, CSR and certificate validation specifications, a deployment safety gate, and target-state Kubernetes manifests. ACME content is target-state reference only; all recommendations are implementable under current constraints (manual DCERTS workflows and REST API patterns) and designed to evolve toward higher automation without weakening custody boundaries.</p>
+</div>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#sec:method-scope-sources" id="toc-sec:method-scope-sources"><span class="toc-section-number">1</span> Method, Scope and Source Artefacts</a>
+<ul>
+<li><a href="#reader-model-and-viewpoint" id="toc-reader-model-and-viewpoint"><span class="toc-section-number">1.1</span> Reader model and viewpoint</a></li>
+<li><a href="#scope-boundaries" id="toc-scope-boundaries"><span class="toc-section-number">1.2</span> Scope boundaries</a>
+<ul>
+<li><a href="#architectural-boundary-tls-termination" id="toc-architectural-boundary-tls-termination"><span class="toc-section-number">1.2.1</span> Architectural boundary (TLS termination)</a></li>
+<li><a href="#domain-scope-phased-enablement" id="toc-domain-scope-phased-enablement"><span class="toc-section-number">1.2.2</span> Domain scope (phased enablement)</a></li>
+<li><a href="#ca-posture-allowlist-model" id="toc-ca-posture-allowlist-model"><span class="toc-section-number">1.2.3</span> CA posture (allowlist model)</a></li>
+</ul></li>
+<li><a href="#method" id="toc-method"><span class="toc-section-number">1.3</span> Method</a></li>
+<li><a href="#sec:design-decisions" id="toc-sec:design-decisions"><span class="toc-section-number">1.4</span> Design decisions summary</a></li>
+</ul></li>
+<li><a href="#document-control" id="toc-document-control"><span class="toc-section-number">2</span> Document Control</a></li>
+<li><a href="#executive-summary" id="toc-executive-summary"><span class="toc-section-number">3</span> Executive Summary</a>
+<ul>
+<li><a href="#certificate-lifecycle-overview" id="toc-certificate-lifecycle-overview"><span class="toc-section-number">3.1</span> Certificate Lifecycle Overview</a></li>
+<li><a href="#critical-findings" id="toc-critical-findings"><span class="toc-section-number">3.2</span> Critical Findings</a></li>
+<li><a href="#highest-leverage-optimisations" id="toc-highest-leverage-optimisations"><span class="toc-section-number">3.3</span> Highest-Leverage Optimisations</a></li>
+<li><a href="#effort-reduction-before-and-after" id="toc-effort-reduction-before-and-after"><span class="toc-section-number">3.4</span> Effort Reduction: Before and After</a></li>
+<li><a href="#poc-and-integration-status-summary" id="toc-poc-and-integration-status-summary"><span class="toc-section-number">3.5</span> POC and Integration Status Summary</a></li>
+</ul></li>
+<li><a href="#sec:control-system" id="toc-sec:control-system"><span class="toc-section-number">4</span> Operating Model as a Control System</a>
+<ul>
+<li><a href="#canonical-identifiers-and-correlation-keys" id="toc-canonical-identifiers-and-correlation-keys"><span class="toc-section-number">4.1</span> Canonical Identifiers and Correlation Keys</a></li>
+<li><a href="#control-invariants" id="toc-control-invariants"><span class="toc-section-number">4.2</span> Control Invariants</a></li>
+<li><a href="#lifecycle-state-machine-execution-semantics" id="toc-lifecycle-state-machine-execution-semantics"><span class="toc-section-number">4.3</span> Lifecycle state machine (execution semantics)</a></li>
+<li><a href="#controller-authority-model-anti-race-condition-rule" id="toc-controller-authority-model-anti-race-condition-rule"><span class="toc-section-number">4.4</span> Controller authority model (anti-race-condition rule)</a></li>
+<li><a href="#sec:machines" id="toc-sec:machines"><span class="toc-section-number">4.5</span> Execution Architecture</a>
+<ul>
+<li><a href="#m1-triage-machine-alerts-rightarrow-ownership-rightarrow-classification" id="toc-m1-triage-machine-alerts-rightarrow-ownership-rightarrow-classification"><span class="toc-section-number">4.5.1</span> M1: Triage Machine (alerts <span class="math inline">\(\rightarrow\)</span> ownership <span class="math inline">\(\rightarrow\)</span> classification)</a></li>
+<li><a href="#m2-issuance-machine-csr-lint-rightarrow-approval-rightarrow-issued-artefact-normalisation" id="toc-m2-issuance-machine-csr-lint-rightarrow-approval-rightarrow-issued-artefact-normalisation"><span class="toc-section-number">4.5.2</span> M2: Issuance Machine (CSR lint <span class="math inline">\(\rightarrow\)</span> approval <span class="math inline">\(\rightarrow\)</span> issued artefact normalisation)</a></li>
+<li><a href="#sec:orr-gate" id="toc-sec:orr-gate"><span class="toc-section-number">4.5.3</span> ORR Gate: Post-Issuance Risk Assessment (blocking)</a></li>
+<li><a href="#m3-deploymentverification-machine-canary-rightarrow-fingerprint-rollout-rightarrow-slo-validation" id="toc-m3-deploymentverification-machine-canary-rightarrow-fingerprint-rollout-rightarrow-slo-validation"><span class="toc-section-number">4.5.4</span> M3: Deployment/Verification Machine (canary <span class="math inline">\(\rightarrow\)</span> fingerprint rollout <span class="math inline">\(\rightarrow\)</span> SLO validation)</a></li>
+<li><a href="#m4-emergency-machine-freeze-rightarrow-expedited-issuance-rightarrow-minimum-viable-proof" id="toc-m4-emergency-machine-freeze-rightarrow-expedited-issuance-rightarrow-minimum-viable-proof"><span class="toc-section-number">4.5.5</span> M4: Emergency Machine (freeze <span class="math inline">\(\rightarrow\)</span> expedited issuance <span class="math inline">\(\rightarrow\)</span> minimum viable proof)</a></li>
+</ul></li>
+<li><a href="#sec:evidence-ledger" id="toc-sec:evidence-ledger"><span class="toc-section-number">4.6</span> Append-only Evidence Ledger</a></li>
+<li><a href="#sec:acme-safety" id="toc-sec:acme-safety"><span class="toc-section-number">4.7</span> ACME Migration Safety Requirements</a></li>
+<li><a href="#implementation-realism" id="toc-implementation-realism"><span class="toc-section-number">4.8</span> Implementation realism</a></li>
+</ul></li>
+<li><a href="#standards-baseline" id="toc-standards-baseline"><span class="toc-section-number">5</span> Standards Baseline</a>
+<ul>
+<li><a href="#nist-and-iso-control-mapping" id="toc-nist-and-iso-control-mapping"><span class="toc-section-number">5.1</span> NIST and ISO Control Mapping</a></li>
+<li><a href="#australian-telecommunications-compliance-non-normative-prompts" id="toc-australian-telecommunications-compliance-non-normative-prompts"><span class="toc-section-number">5.2</span> Australian Telecommunications Compliance (Non-normative prompts)</a></li>
+</ul></li>
+<li><a href="#architecture-overview" id="toc-architecture-overview"><span class="toc-section-number">6</span> Architecture Overview</a>
+<ul>
+<li><a href="#split-custody-tls-model" id="toc-split-custody-tls-model"><span class="toc-section-number">6.1</span> Split-Custody TLS Model</a>
+<ul>
+<li><a href="#split-custody-automation-model" id="toc-split-custody-automation-model"><span class="toc-section-number">6.1.1</span> Split-Custody Automation Model</a></li>
+<li><a href="#sec:assertion-contract" id="toc-sec:assertion-contract"><span class="toc-section-number">6.1.2</span> Assertion contract (Cequence to OGW)</a></li>
+</ul></li>
+<li><a href="#certificate-trust-chain" id="toc-certificate-trust-chain"><span class="toc-section-number">6.2</span> Certificate Trust Chain</a></li>
+</ul></li>
+<li><a href="#sec:extended-controls" id="toc-sec:extended-controls"><span class="toc-section-number">7</span> Non-Telstra CA Support, Custom Domains and Governance</a>
+<ul>
+<li><a href="#sec:domain-authorisation" id="toc-sec:domain-authorisation"><span class="toc-section-number">7.1</span> Domain Authorisation</a>
+<ul>
+<li><a href="#sec:acm-delegation" id="toc-sec:acm-delegation"><span class="toc-section-number">7.1.1</span> ACM delegation model for vendor-managed certificates</a></li>
+</ul></li>
+<li><a href="#sec:trust-anchor-allowlist" id="toc-sec:trust-anchor-allowlist"><span class="toc-section-number">7.2</span> Trust Anchor Allowlist</a></li>
+<li><a href="#sec:governance-framework" id="toc-sec:governance-framework"><span class="toc-section-number">7.3</span> Governance Framework</a>
+<ul>
+<li><a href="#tiering" id="toc-tiering"><span class="toc-section-number">7.3.1</span> Tiering</a></li>
+<li><a href="#ownership-raci" id="toc-ownership-raci"><span class="toc-section-number">7.3.2</span> Ownership (RACI)</a></li>
+<li><a href="#decommission-triggers" id="toc-decommission-triggers"><span class="toc-section-number">7.3.3</span> Decommission triggers</a></li>
+<li><a href="#review-cadence" id="toc-review-cadence"><span class="toc-section-number">7.3.4</span> Review cadence</a></li>
+<li><a href="#exceptions" id="toc-exceptions"><span class="toc-section-number">7.3.5</span> Exceptions</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#dcerts-and-acme-integration" id="toc-dcerts-and-acme-integration"><span class="toc-section-number">8</span> DCERTS and ACME Integration</a>
+<ul>
+<li><a href="#sec:transitional-patterns" id="toc-sec:transitional-patterns"><span class="toc-section-number">8.1</span> Transitional Patterns (REST Today <span class="math inline">\(\rightarrow\)</span> ACME Later)</a>
+<ul>
+<li><a href="#sec:controller-handoff" id="toc-sec:controller-handoff"><span class="toc-section-number">8.1.1</span> Controller Handoff Protocol</a></li>
+<li><a href="#aws-saas-deployment-topology-cequence" id="toc-aws-saas-deployment-topology-cequence"><span class="toc-section-number">8.1.2</span> AWS SaaS Deployment Topology (Cequence)</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#sec:vault-esm" id="toc-sec:vault-esm"><span class="toc-section-number">9</span> Secrets Management (ESM/Vault)</a></li>
+<li><a href="#certificate-lifecycle-stages" id="toc-certificate-lifecycle-stages"><span class="toc-section-number">10</span> Certificate Lifecycle Stages</a>
+<ul>
+<li><a href="#end-to-end-lifecycle-swimlane" id="toc-end-to-end-lifecycle-swimlane"><span class="toc-section-number">10.1</span> End-to-End Lifecycle Swimlane</a></li>
+<li><a href="#pattern-coverage-across-lifecycle-stages" id="toc-pattern-coverage-across-lifecycle-stages"><span class="toc-section-number">10.2</span> Pattern Coverage Across Lifecycle Stages</a></li>
+<li><a href="#sec:pattern-categories" id="toc-sec:pattern-categories"><span class="toc-section-number">10.3</span> Pattern Categories (Coverage Checklist)</a></li>
+<li><a href="#roles-and-responsibilities-raci" id="toc-roles-and-responsibilities-raci"><span class="toc-section-number">10.4</span> Roles and Responsibilities (RACI)</a></li>
+<li><a href="#certificate-inventory-schema" id="toc-certificate-inventory-schema"><span class="toc-section-number">10.5</span> Certificate Inventory Schema</a>
+<ul>
+<li><a href="#inventory-enrichment" id="toc-inventory-enrichment"><span class="toc-section-number">10.5.1</span> Inventory enrichment</a></li>
+<li><a href="#pattern-mtls-client-certificate-tracking-certificate_roleclient_mtls" id="toc-pattern-mtls-client-certificate-tracking-certificate_roleclient_mtls"><span class="toc-section-number">10.5.2</span> Pattern: mTLS client certificate tracking (<code>certificate_role=client_mtls</code>)</a></li>
+<li><a href="#inventory-schema-enforcement" id="toc-inventory-schema-enforcement"><span class="toc-section-number">10.5.3</span> Inventory schema enforcement</a></li>
+</ul></li>
+<li><a href="#telemetry-and-alerting-hooks-early-detection" id="toc-telemetry-and-alerting-hooks-early-detection"><span class="toc-section-number">10.6</span> Telemetry and Alerting Hooks (Early Detection)</a>
+<ul>
+<li><a href="#splunk-integration-cequence-events" id="toc-splunk-integration-cequence-events"><span class="toc-section-number">10.6.1</span> Splunk Integration (Cequence Events)</a></li>
+</ul></li>
+<li><a href="#cryptographic-baseline" id="toc-cryptographic-baseline"><span class="toc-section-number">10.7</span> Cryptographic Baseline</a></li>
+</ul></li>
+<li><a href="#mandatory-control-gates" id="toc-mandatory-control-gates"><span class="toc-section-number">11</span> Mandatory Control Gates</a>
+<ul>
+<li><a href="#sec:csr-lint-gate" id="toc-sec:csr-lint-gate"><span class="toc-section-number">11.1</span> G1: CSR Lint Gate (Pre-Issuance)</a></li>
+<li><a href="#sec:cert-lint-gate" id="toc-sec:cert-lint-gate"><span class="toc-section-number">11.2</span> G2: Post-Issuance Validation Specification</a></li>
+<li><a href="#g3-deployment-safety-gate-runtime-verification" id="toc-g3-deployment-safety-gate-runtime-verification"><span class="toc-section-number">11.3</span> G3: Deployment Safety Gate (Runtime Verification)</a>
+<ul>
+<li><a href="#sec:evidence-checklist-deploy-gate" id="toc-sec:evidence-checklist-deploy-gate"><span class="toc-section-number">11.3.1</span> Evidence checklist mapping (Pattern D3 aligned to Table 18)</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#failure-mode-analysis" id="toc-failure-mode-analysis"><span class="toc-section-number">12</span> Failure Mode Analysis</a>
+<ul>
+<li><a href="#risk-matrix" id="toc-risk-matrix"><span class="toc-section-number">12.1</span> Risk Matrix</a></li>
+<li><a href="#threat-model-overview" id="toc-threat-model-overview"><span class="toc-section-number">12.2</span> Threat Model Overview</a></li>
+</ul></li>
+<li><a href="#sec:runbooks" id="toc-sec:runbooks"><span class="toc-section-number">13</span> Operational Runbooks</a>
+<ul>
+<li><a href="#standard-renewal-runbook" id="toc-standard-renewal-runbook"><span class="toc-section-number">13.1</span> Standard Renewal Runbook</a></li>
+<li><a href="#sec:emergency-rotation" id="toc-sec:emergency-rotation"><span class="toc-section-number">13.2</span> Emergency Rotation Runbook</a>
+<ul>
+<li><a href="#dedicated-emergency-workflow-patterns-required" id="toc-dedicated-emergency-workflow-patterns-required"><span class="toc-section-number">13.2.1</span> Dedicated emergency workflow patterns (required)</a></li>
+</ul></li>
+<li><a href="#operational-slos" id="toc-operational-slos"><span class="toc-section-number">13.3</span> Operational SLOs</a></li>
+<li><a href="#support-escalation-reference" id="toc-support-escalation-reference"><span class="toc-section-number">13.4</span> Support Escalation Reference</a></li>
+</ul></li>
+<li><a href="#toolchain-integration" id="toc-toolchain-integration"><span class="toc-section-number">14</span> Toolchain Integration</a>
+<ul>
+<li><a href="#integration-map" id="toc-integration-map"><span class="toc-section-number">14.1</span> Integration Map</a></li>
+<li><a href="#sec:splunk-verification" id="toc-sec:splunk-verification"><span class="toc-section-number">14.2</span> Engineering verification (Splunk cross-checks)</a></li>
+<li><a href="#network-flows" id="toc-network-flows"><span class="toc-section-number">14.3</span> Network Flows</a></li>
+</ul></li>
+<li><a href="#sec:non-k8s" id="toc-sec:non-k8s"><span class="toc-section-number">15</span> Non-Kubernetes Estate Strategies</a></li>
+<li><a href="#recommendations" id="toc-recommendations"><span class="toc-section-number">16</span> Recommendations</a>
+<ul>
+<li><a href="#r1-resolve-dcerts-acme-blocker" id="toc-r1-resolve-dcerts-acme-blocker"><span class="toc-section-number">16.1</span> R1: Resolve DCERTS ACME Blocker</a></li>
+<li><a href="#r2-implement-certificate-inventory" id="toc-r2-implement-certificate-inventory"><span class="toc-section-number">16.2</span> R2: Implement Certificate Inventory</a></li>
+<li><a href="#r3-deploy-control-gates" id="toc-r3-deploy-control-gates"><span class="toc-section-number">16.3</span> R3: Deploy Control Gates</a></li>
+<li><a href="#r4-establish-emergency-templates" id="toc-r4-establish-emergency-templates"><span class="toc-section-number">16.4</span> R4: Establish Emergency Templates</a></li>
+<li><a href="#r5-auto-generate-change-review-packs" id="toc-r5-auto-generate-change-review-packs"><span class="toc-section-number">16.5</span> R5: Auto-Generate Change Review Packs</a></li>
+<li><a href="#r6-confirm-secrets-management-ownership" id="toc-r6-confirm-secrets-management-ownership"><span class="toc-section-number">16.6</span> R6: Confirm Secrets Management Ownership</a></li>
+<li><a href="#r7-deploy-orr-gate-and-trust-anchor-allowlist" id="toc-r7-deploy-orr-gate-and-trust-anchor-allowlist"><span class="toc-section-number">16.7</span> R7: Deploy ORR Gate and Trust Anchor Allowlist</a></li>
+<li><a href="#r8-enable-domain-authorisation-for-custom-domains" id="toc-r8-enable-domain-authorisation-for-custom-domains"><span class="toc-section-number">16.8</span> R8: Enable Domain Authorisation for Custom Domains</a></li>
+</ul></li>
+<li><a href="#compliance-considerations" id="toc-compliance-considerations"><span class="toc-section-number">17</span> Compliance Considerations</a>
+<ul>
+<li><a href="#software-licensing" id="toc-software-licensing"><span class="toc-section-number">17.1</span> Software Licensing</a></li>
+<li><a href="#export-control" id="toc-export-control"><span class="toc-section-number">17.2</span> Export Control</a></li>
+<li><a href="#data-residency" id="toc-data-residency"><span class="toc-section-number">17.3</span> Data Residency</a></li>
+</ul></li>
+<li><a href="#delivery-roadmap" id="toc-delivery-roadmap"><span class="toc-section-number">18</span> Delivery Roadmap</a></li>
+<li><a href="#conclusion" id="toc-conclusion"><span class="toc-section-number">19</span> Conclusion</a></li>
+<li><a href="#references" id="toc-references">References</a></li>
+<li><a href="#sec:glossary" id="toc-sec:glossary">Glossary</a></li>
+<li><a href="#app:scripts" id="toc-app:scripts"><span class="toc-section-number">20</span> Validation Scripts</a></li>
+<li><a href="#app:threat-model" id="toc-app:threat-model"><span class="toc-section-number">21</span> Threat Model Diagram</a></li>
+<li><a href="#app:evidence" id="toc-app:evidence"><span class="toc-section-number">22</span> Evidence Artefacts (Representative Examples)</a>
+<ul>
+<li><a href="#expiry-date-drift-evidence-split-custody" id="toc-expiry-date-drift-evidence-split-custody"><span class="toc-section-number">22.1</span> Expiry Date Drift Evidence (Split-Custody)</a></li>
+<li><a href="#tls-termination-mapping-evidence-residency-export-control" id="toc-tls-termination-mapping-evidence-residency-export-control"><span class="toc-section-number">22.2</span> TLS Termination Mapping Evidence (Residency / Export-Control)</a></li>
+</ul></li>
+</ul>
+</nav>
+<p><strong>Keywords:</strong> PKI, X.509, certificate lifecycle, mTLS, TLS 1.2+, API gateway, service mesh, ACME, RFC 8555, cert-manager, Kubernetes, HashiCorp Vault, DCERTS, DevSecOps, NIST SP 800-204, ISO 27001</p>
+<figure id="fig:operating-model-at-a-glance" data-latex-placement="H">
+<div class="mxgraph" style="max-width:100%;margin:16px 0;" data-mxgraph="{&quot;url&quot;: &quot;drawio/fig01_operating_model_at_a_glance.drawio&quot;, &quot;toolbar&quot;: &quot;zoom&quot;, &quot;resize&quot;: true, &quot;nav&quot;: false, &quot;border&quot;: 10, &quot;check-visible-state&quot;: false}"></div>
+
+</figure>
+<p><strong>Scoping note:</strong> All patterns map across the three pillars in <a href="#fig:operating-model-at-a-glance" data-reference-type="ref" data-reference="fig:operating-model-at-a-glance">1</a>: people (accountability boundaries), process (mandatory control gates with evidence), and technology (tools that enforce the gates). Automation enables ownership and process controls; it does not replace them.</p>
+<hr />
+<h1 data-number="1" id="sec:method-scope-sources"><span class="header-section-number">1</span> Method, Scope and Source Artefacts</h1>
+<h2 data-number="1.1" id="reader-model-and-viewpoint"><span class="header-section-number">1.1</span> Reader model and viewpoint</h2>
+<p>The Cequence platform owner is accountable for availability, security, and auditability of customer-facing REST APIs protected by Cequence defenders. This operating model targets outage-driving certificate failures. It preserves split custody boundaries and mandatory PKI/DCERTS approvals.</p>
+<h2 data-number="1.2" id="scope-boundaries"><span class="header-section-number">1.2</span> Scope boundaries</h2>
+<ul>
+<li><p><strong>In scope:</strong> REST API endpoints protected by Cequence defenders, including server certificates for inbound TLS termination and downstream TLS legs where Cequence is accountable for lifecycle coordination.</p></li>
+<li><p><strong>Out of scope:</strong> SOAP, SIP, SS7, Diameter, IMS signalling, and non-HTTP API protocols.</p></li>
+<li><p><strong>Tooling:</strong> Jira is the internal system of record for triage. Zendesk is a manual vendor-facing handoff until a vendor-approved integration path exists.</p></li>
+<li><p><strong>Cloud:</strong> The operating model must function in a cloud environment with explicit data residency constraints for private key operations.</p></li>
+</ul>
+<h3 data-number="1.2.1" id="architectural-boundary-tls-termination"><span class="header-section-number">1.2.1</span> Architectural boundary (TLS termination)</h3>
+<p>TLS terminates at the Cequence defender. The downstream OKAPI Gateway (OGW) receives traffic over a separate TLS session and cannot observe the client-facing handshake. This is a hard constraint: OGW cannot independently verify TLS version, cipher suite, or client certificate details and must rely on assertions from Cequence.</p>
+<h3 data-number="1.2.2" id="domain-scope-phased-enablement"><span class="header-section-number">1.2.2</span> Domain scope (phased enablement)</h3>
+<p>The operating model phases domain (FQDN/SAN) support:</p>
+<ul>
+<li><p><strong>Phase 1 (current):</strong> Telstra-owned domains only. Domain must be in a Telstra DNS zone or an explicitly approved partner zone; authorisation evidence is ownership attestation from Telstra DNS team or delegated zone evidence.</p></li>
+<li><p><strong>Phase 2 (future, gated):</strong> Customer BYO domains. Requires additional gates: domain ownership proof (DNS TXT record), validation method approval, explicit offboarding path, and operational support boundary acknowledgement. Phase 2 requires an explicit architecture review and a risk acceptance decision.</p></li>
+</ul>
+<p>The phased model ships safely with Telstra domains first, preserves extensibility for BYO domains, and prevents governance entropy.</p>
+<h3 data-number="1.2.3" id="ca-posture-allowlist-model"><span class="header-section-number">1.2.3</span> CA posture (allowlist model)</h3>
+<p>The operating model enforces an allowlist of approved CA profiles (Decision A). Case-by-case approval without an allowlist entry is disallowed. Every certificate must reference a <code>server_trust_profile_id</code> from the trust anchor allowlist. Non-Telstra CAs are permitted only after passing due diligence and being added to the allowlist.</p>
+<h2 data-number="1.3" id="method"><span class="header-section-number">1.3</span> Method</h2>
+<ul>
+<li><p>Start from outage-driving failure modes, then design enforceable control gates and evidence requirements.</p></li>
+<li><p>Treat runtime truth as authoritative. Deployed means served on the wire and proven by SNI probe and fingerprint.</p></li>
+<li><p>Maintain custody boundaries. Inventory and workflows handle metadata only.</p></li>
+<li><p>Use internal artefacts as primary inputs. Public standards are used as design guidance, not as a compliance claim.</p></li>
+</ul>
+<h2 data-number="1.4" id="sec:design-decisions"><span class="header-section-number">1.4</span> Design decisions summary</h2>
+<p>Table <a href="#tab:design-decisions" data-reference-type="ref" data-reference="tab:design-decisions">1</a> lists the binding design decisions governing this document. Each decision constrains subsequent content; consult this table before reviewing individual sections.</p>
+<div id="tab:design-decisions">
+<table style="width:92%;">
+<caption>Design decisions governing the operating model.</caption>
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 32%" />
+<col style="width: 30%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>ID</strong></th>
+<th style="text-align: left;"><strong>Decision</strong></th>
+<th style="text-align: left;"><strong>Rationale</strong></th>
+<th style="text-align: left;"><strong>Status</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">A</td>
+<td style="text-align: left;">CA posture: explicit allowlist of approved CA profiles; case-by-case approval without allowlist entry disallowed</td>
+<td style="text-align: left;">Prevents governance entropy as non-Telstra CAs are onboarded</td>
+<td style="text-align: left;">Decided (Section <a href="#sec:method-scope-sources" data-reference-type="ref" data-reference="sec:method-scope-sources">1</a>)</td>
+</tr>
+<tr>
+<td style="text-align: left;">B1</td>
+<td style="text-align: left;">Assertion strictness (Cequence-to-OGW contract)</td>
+<td style="text-align: left;">Determines enforcement mode for cross-boundary assertions</td>
+<td style="text-align: left;">Blocked (owner approval)</td>
+</tr>
+<tr>
+<td style="text-align: left;">B2</td>
+<td style="text-align: left;">Domain model scope (phased enablement)</td>
+<td style="text-align: left;">Phase 1 Telstra-owned; Phase 2 BYO domains gated on explicit review</td>
+<td style="text-align: left;">Decided (Section <a href="#sec:method-scope-sources" data-reference-type="ref" data-reference="sec:method-scope-sources">1</a>)</td>
+</tr>
+<tr>
+<td style="text-align: left;">B3</td>
+<td style="text-align: left;">CA posture detail (which non-Telstra CAs, what tier)</td>
+<td style="text-align: left;">ACM delegation assessed as Tier 2 acceptable (Section <a href="#sec:acm-delegation" data-reference-type="ref" data-reference="sec:acm-delegation">7.1.1</a>); broader posture blocked</td>
+<td style="text-align: left;">Partially decided</td>
+</tr>
+<tr>
+<td style="text-align: left;">C</td>
+<td style="text-align: left;">KUDOS Platform ruled out; KUDOS Compare API retained</td>
+<td style="text-align: left;">Platform incurs K8s Secrets overhead in AWS SaaS; Compare API serves ORR workflow</td>
+<td style="text-align: left;">Decided</td>
+</tr>
+<tr>
+<td style="text-align: left;">D</td>
+<td style="text-align: left;">ORR gate placement: post-issuance, pre-deployment (blocking)</td>
+<td style="text-align: left;">Risk assessment must occur after cert is issued but before it reaches production</td>
+<td style="text-align: left;">Decided (Section <a href="#sec:orr-gate" data-reference-type="ref" data-reference="sec:orr-gate">4.5.3</a>)</td>
+</tr>
+<tr>
+<td style="text-align: left;">E</td>
+<td style="text-align: left;">Rundeck as orchestration engine (under evaluation)</td>
+<td style="text-align: left;">GitLab-native, auditable, API-driven; Power Automate retained for email ingestion only</td>
+<td style="text-align: left;">Under evaluation</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 data-number="2" id="document-control"><span class="header-section-number">2</span> Document Control</h1>
+<table style="width:95%;">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 73%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Attribute</strong></th>
+<th style="text-align: left;"><strong>Value</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Status</td>
+<td style="text-align: left;">Draft for internal review</td>
+</tr>
+<tr>
+<td style="text-align: left;">Version</td>
+<td style="text-align: left;">2.0 (Enhanced Technical Density)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Classification</td>
+<td style="text-align: left;">Internal (SecEng)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Scope</td>
+<td style="text-align: left;">Cequence defenders certificate lifecycle covering onboarding and renewals for API endpoints in split custody environments</td>
+</tr>
+<tr>
+<td style="text-align: left;">Audience</td>
+<td style="text-align: left;">SecEng, PKI operations, platform engineering, SRE, API platform owners, change management</td>
+</tr>
+<tr>
+<td style="text-align: left;">Dependencies</td>
+<td style="text-align: left;">DCERTS portal access; AGS entitlements; Kubernetes 1.* (v1.x) for the <em>platform examples</em>; and (optionally) cert-manager v1.* for the <em>future ACME automation path</em> once DCERTS ACME is functional.</td>
+</tr>
+<tr>
+<td style="text-align: left;">Assumptions</td>
+<td style="text-align: left;">Primary inputs are internal platform artefacts: POC outputs, design notes, and operating constraints. Public standards (NIST/ISO/RFCs) are design guidance only; GRC/Legal validation and service-specific evidence are required before making normative compliance claims. Technical specifications are derived from ORCHaaS POC and ESM BRD documents. KUDOS platform integration (auto-cert-operator) was evaluated and ruled out: native Kubernetes Secrets output incurs unnecessary operational overhead for AWS SaaS. The KUDOS Compare API (<code>/api/compare</code>) is a separate capability. It compares old and new certificates, produces a risk score, and populates the Operational Readiness Review (ORR) form via autofill. This API is actively used and is not affected by the platform ruling.</td>
+</tr>
+<tr>
+<td style="text-align: left;">Limitations</td>
+<td style="text-align: left;">DCERTS ACME is blocked (HTTP 500 on order creation); current operational model uses manual DCERTS or REST API. ACME content is target-state only. Kubernetes-focused; non-Kubernetes strategies in Section <a href="#sec:non-k8s" data-reference-type="ref" data-reference="sec:non-k8s">15</a>. Standards edition dates require GRC verification.</td>
+</tr>
+</tbody>
+</table>
+<p>Term definitions are in the Glossary (page ).</p>
+<h1 data-number="3" id="executive-summary"><span class="header-section-number">3</span> Executive Summary</h1>
+<p>Cequence defenders terminate TLS (or mTLS) for inbound API traffic and establish a separate TLS session to upstream platforms. Two distinct certificates exist for the same customer-facing domain, each with independent private keys and different operational owners (Cequence Ops vs OKAPI Ops). This split custody creates a certificate lifecycle problem that is both technical and organisational.</p>
+<p>Certificate issuance currently relies on manual DCERTS workflows and the DCERTS REST API. The target state is ACME automation (RFC 8555) via cert-manager, but DCERTS ACME returns HTTP 500 on order creation and remains blocked pending vendor resolution. REST API prerequisites (service account, AGS entitlement, firewall rules) must be completed before REST automation is operable.</p>
+<h2 data-number="3.1" id="certificate-lifecycle-overview"><span class="header-section-number">3.1</span> Certificate Lifecycle Overview</h2>
+<p>Figure <a href="#fig:lifecycle-wheel" data-reference-type="ref" data-reference="fig:lifecycle-wheel">2</a> shows the certificate lifecycle stages at a glance. Each certificate object <span class="math inline">\(\mathcal{C}\)</span> progresses clockwise through seven stages; gates enforce quality controls at each transition. The detailed state machine with rejection paths is shown in Figure <a href="#fig:state-transition" data-reference-type="ref" data-reference="fig:state-transition">4</a>.</p>
+<figure id="fig:lifecycle-wheel" data-latex-placement="H">
+<div class="mxgraph" style="max-width:100%;margin:16px 0;" data-mxgraph="{&quot;url&quot;: &quot;drawio/fig02_lifecycle_wheel.drawio&quot;, &quot;toolbar&quot;: &quot;zoom&quot;, &quot;resize&quot;: true, &quot;nav&quot;: false, &quot;border&quot;: 10, &quot;check-visible-state&quot;: false}"></div>
+
+</figure>
+<h2 data-number="3.2" id="critical-findings"><span class="header-section-number">3.2</span> Critical Findings</h2>
+<ol>
+<li><p><strong>DCERTS ACME Integration Blocked:</strong> The ORCHaaS POC observed persistent HTTP 500 errors (<code>AVX_CERT-ACME-008</code>) during ACME order creation. POC artefacts captured a server-side stack trace consistent with a backend failure (<code>java.lang.NullPointerException</code> in <code>AcmeCreateOrderService</code>). Retain an immutable snapshot of the relevant log excerpts and request/response identifiers in the evidence pack. This blocks automated certificate issuance via cert-manager until vendor resolution.</p></li>
+<li><p><strong>Split-Custody Coordination Gap:</strong> No automated mechanism synchronises certificate renewal planning between Cequence and OKAPI teams. This causes expiry date drift (representative examples in Appendix <a href="#app:evidence" data-reference-type="ref" data-reference="app:evidence">22</a>) and requires manual coordination.</p></li>
+<li><p><strong>Secrets Management Fragmentation:</strong> EAB keys, RFC 2136 TSIG secrets, and private keys are distributed across AWS Secrets Manager, Sealed Secrets, and (in some workflows) manual file-based storage (e.g., SharePoint) without a single, consistently enforced access-governance model.</p></li>
+<li><p><strong>Chain Validation Gaps:</strong> Legacy endpoint chains <em>may</em> include SHA-1-signed intermediates. These cause compatibility failures with OpenSSL 3.x runtimes (representative example chain + reproducer output in Appendix <a href="#app:evidence" data-reference-type="ref" data-reference="app:evidence">22</a>). The trust-chain diagram in <a href="#fig:trust-chain" data-reference-type="ref" data-reference="fig:trust-chain">8</a> is a <em>target-state</em> example (structure and lint objectives), not evidence that all deployed endpoints are already clean; the current prevalence is <strong>unknown</strong> and must be measured via inventory + automated scans before any statement about risk magnitude or “how widespread” can be made. No automated chain linting is evidenced in the current workflow.</p></li>
+<li><p><strong>Non-Telstra CA and Custom Domain Controls Absent:</strong> No trust anchor allowlist, domain authorisation lifecycle, or tiered governance framework exists for certificates issued by non-Telstra CAs (e.g. Amazon Trust Services via ACM) or for custom domain enablement. Section <a href="#sec:extended-controls" data-reference-type="ref" data-reference="sec:extended-controls">7</a> defines these controls: a phased domain authorisation model (Invariant I7), a CA due diligence checklist with trust profile bindings (Invariant I8), and a tiering model proportional to risk. The ORR gate (Section <a href="#sec:orr-gate" data-reference-type="ref" data-reference="sec:orr-gate">4.5.3</a>) provides post-issuance risk assessment via the KUDOS Compare API before any certificate reaches production.</p></li>
+</ol>
+<h2 data-number="3.3" id="highest-leverage-optimisations"><span class="header-section-number">3.3</span> Highest-Leverage Optimisations</h2>
+<ul>
+<li><p>Enforce the three-gate model: G1 (CSR lint, pre-issuance), G2 (post-issuance validation + ORR risk assessment via KUDOS Compare), G3 (deployment safety gate, runtime verification)</p></li>
+<li><p>Establish a machine-readable certificate inventory (bootstrap first). Define explicit cutover criteria to an authoritative source of truth once integrity controls are operating</p></li>
+<li><p>Establish pre-approved emergency change templates for key compromise and CA revocation</p></li>
+<li><p>Resolve DCERTS ACME blocker (prerequisite for cert-manager), but do <em>not</em> assume ACME availability in the near-term operating model</p></li>
+<li><p>Deploy the ORR gate (Section <a href="#sec:orr-gate" data-reference-type="ref" data-reference="sec:orr-gate">4.5.3</a>) and trust anchor allowlist (Section <a href="#sec:trust-anchor-allowlist" data-reference-type="ref" data-reference="sec:trust-anchor-allowlist">7.2</a>) to enable non-Telstra CA onboarding and phased custom domain support</p></li>
+</ul>
+<h2 data-number="3.4" id="effort-reduction-before-and-after"><span class="header-section-number">3.4</span> Effort Reduction: Before and After</h2>
+<p>Table <a href="#tab:effort-reduction" data-reference-type="ref" data-reference="tab:effort-reduction">2</a> quantifies the SecEng effort per certificate renewal under the current manual workflow and the target operating model. SecEng coordinates; Cequence Ops (vendor) executes. The operating model eliminates coordination overhead for automated paths and reduces manual path effort through templating and inventory-driven CRP generation.</p>
+<div id="tab:effort-reduction">
+<table style="width:92%;">
+<caption>SecEng effort per certificate renewal: current vs target operating model.</caption>
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 36%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Activity</strong></th>
+<th style="text-align: left;"><strong>Current</strong></th>
+<th style="text-align: left;"><strong>Target</strong></th>
+<th style="text-align: left;"><strong>How</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Vendor coordination (Zendesk, email, scheduling)</td>
+<td style="text-align: left;">90 min</td>
+<td style="text-align: left;">15 min</td>
+<td style="text-align: left;">Inventory-driven CRP auto-populates ticket fields</td>
+</tr>
+<tr>
+<td style="text-align: left;">CRP/change pack preparation</td>
+<td style="text-align: left;">60 min</td>
+<td style="text-align: left;">5 min</td>
+<td style="text-align: left;">CRP generated from inventory + G3 gate spec (R8)</td>
+</tr>
+<tr>
+<td style="text-align: left;">CSR review and validation</td>
+<td style="text-align: left;">30 min</td>
+<td style="text-align: left;">2 min</td>
+<td style="text-align: left;">G1 CSR lint gate (automated ZLint/certlint)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Post-deployment verification</td>
+<td style="text-align: left;">30 min</td>
+<td style="text-align: left;">5 min</td>
+<td style="text-align: left;">G3 gate: automated SNI probe + fingerprint check</td>
+</tr>
+<tr>
+<td style="text-align: left;">Evidence pack assembly</td>
+<td style="text-align: left;">30 min</td>
+<td style="text-align: left;">0 min</td>
+<td style="text-align: left;">Gate outputs auto-captured to evidence ledger</td>
+</tr>
+<tr>
+<td style="text-align: left;">Ticket closure and inventory update</td>
+<td style="text-align: left;">20 min</td>
+<td style="text-align: left;">5 min</td>
+<td style="text-align: left;">Jira webhook + inventory API update</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Total per renewal (DCERTS path)</strong></td>
+<td style="text-align: left;"><strong>4.3 hrs</strong></td>
+<td style="text-align: left;"><strong>0.5 hrs</strong></td>
+<td style="text-align: left;"><strong>88% reduction</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>ACM auto-renewal path</strong></td>
+<td style="text-align: left;"><strong>4.3 hrs</strong></td>
+<td style="text-align: left;"><strong>0 hrs</strong></td>
+<td style="text-align: left;"><strong>ACM renews automatically; SecEng monitors via ORR</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>At 50 renewals per quarter, this reduces SecEng effort from approximately 215 hours to 25 hours (DCERTS path) or near zero (ACM path). The reduction is structural, not incremental: automated gates replace manual verification, and inventory-driven templates replace manual data entry.</p>
+<h2 data-number="3.5" id="poc-and-integration-status-summary"><span class="header-section-number">3.5</span> POC and Integration Status Summary</h2>
+<div id="tab:poc-status">
+<table style="width:92%;">
+<caption>Current status of certificate automation integration paths.</caption>
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 18%" />
+<col style="width: 20%" />
+<col style="width: 18%" />
+<col style="width: 22%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Integration</strong></th>
+<th style="text-align: left;"><strong>What It Does</strong></th>
+<th style="text-align: left;"><strong>Problem</strong></th>
+<th style="text-align: left;"><strong>Status</strong></th>
+<th style="text-align: left;"><strong>Next Step</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">DCERTS ACME</td>
+<td style="text-align: left;">Automated cert issuance via cert-manager DNS-01</td>
+<td style="text-align: left;">HTTP 500 on order creation (<code>AVX_CERT-ACME-008</code>)</td>
+<td style="text-align: left;"><span style="color: warnred"><strong>BLOCKED</strong></span></td>
+<td style="text-align: left;">Escalate to AppViewX vendor; no ETA</td>
+</tr>
+<tr>
+<td style="text-align: left;">DCERTS REST API</td>
+<td style="text-align: left;">Direct API integration for cert request/retrieval</td>
+<td style="text-align: left;">API validated (KUDOS cert-automation uses it in production); Cequence-specific prereqs pending</td>
+<td style="text-align: left;"><span style="color: okgreen"><strong>VALIDATED</strong></span></td>
+<td style="text-align: left;">Complete Phase 1 prereqs (service account, AGS, firewall)</td>
+</tr>
+<tr>
+<td style="text-align: left;">KUDOS Platform</td>
+<td style="text-align: left;">K8s operator writes certs to Secrets</td>
+<td style="text-align: left;">Native K8s Secrets output; integrating with AWS SaaS incurs unnecessary operational overhead</td>
+<td style="text-align: left;"><span style="color: warnred"><strong>RULED OUT</strong></span></td>
+<td style="text-align: left;">Ruled out; use REST API instead</td>
+</tr>
+<tr>
+<td style="text-align: left;">KUDOS Compare API</td>
+<td style="text-align: left;">Certificate risk assessment via <code>/api/compare</code>; feeds ORR form autofill with risk score and findings</td>
+<td style="text-align: left;">Distinct from KUDOS platform; web-based comparison tool, not a K8s operator</td>
+<td style="text-align: left;"><span style="color: okgreen"><strong>CURRENT</strong></span></td>
+<td style="text-align: left;">Operational; integrated with ORR workflow</td>
+</tr>
+<tr>
+<td style="text-align: left;">Manual DCERTS</td>
+<td style="text-align: left;">Portal-based workflow with PKI approval</td>
+<td style="text-align: left;">Manual; no API; coordination overhead</td>
+<td style="text-align: left;"><span style="color: okgreen"><strong>CURRENT</strong></span></td>
+<td style="text-align: left;">Continue as fallback; document runbook</td>
+</tr>
+<tr>
+<td style="text-align: left;">Vault/ESM PKI</td>
+<td style="text-align: left;">Delegated issuer via Vault PKI engine</td>
+<td style="text-align: left;">Governance not approved; AU-residency unconfirmed</td>
+<td style="text-align: left;"><span style="color: infoamber"><strong>FUTURE</strong></span></td>
+<td style="text-align: left;">Await governance + AU-residency evidence</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<script type="text/javascript" src="https://viewer.diagrams.net/js/viewer-static.min.js"></script>
+<script defer src="assets/download-injector.js"></script>
+</body>
+</html>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Security Architecture and Engineering L4 SecEng Team Telstra Group" />
+  <title>Certificate Lifecycle Operating Model</title>
+  
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+
+
+<title>Control System Framework</title>
+<style>
+  :root { --text-primary: #1d1d1f; --text-secondary: #6e6e73; --text-link: #0066cc; --bg-primary: #fff; --bg-secondary: #f5f5f7; --bg-code: #f5f5f7; --border: #d2d2d7; --panel-info-bg: #e8f0fe; --panel-info-border: #4285f4; --panel-warn-bg: #fef7e0; --panel-warn-border: #f9ab00; --panel-error-bg: #fce8e6; --panel-error-border: #d93025; }
+  body { font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.52947; color: var(--text-primary); max-width: 980px; margin: 0 auto; padding: 0 22px; background: var(--bg-primary); -webkit-font-smoothing: antialiased; }
+  h1 { font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 28px; font-weight: 600; color: var(--text-primary); letter-spacing: .007em; line-height: 1.14286; margin: 40px 0 12px 0; }
+  h2 { font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 22px; font-weight: 600; color: var(--text-primary); letter-spacing: .016em; line-height: 1.18182; margin: 32px 0 8px 0; }
+  h3 { font-size: 17px; font-weight: 600; color: var(--text-primary); letter-spacing: -.022em; line-height: 1.23536; margin: 24px 0 6px 0; }
+  h4 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 16px 0 4px 0; }
+  p { margin: 8px 0; }
+  a { color: var(--text-link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 13px; }
+  th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--bg-secondary); font-weight: 600; color: var(--text-primary); }
+  tr:nth-child(even) { background: #fafafa; }
+  code { font-family: "SF Mono", SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace; font-size: 12px; background: var(--bg-code); padding: 2px 5px; border-radius: 4px; color: var(--text-primary); }
+  pre { background: var(--bg-code); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; overflow-x: auto; font-size: 12px; line-height: 1.6; }
+  pre code { background: none; padding: 0; }
+  figure { margin: 20px 0; text-align: center; }
+  figcaption { font-size: 12px; color: var(--text-secondary); margin-top: 8px; font-style: italic; line-height: 1.4; }
+  img { max-width: 100%; height: auto; border-radius: 4px; }
+  ul, ol { padding-left: 22px; margin: 8px 0; }
+  li { margin-bottom: 4px; }
+  blockquote { border-left: 3px solid var(--panel-info-border); background: var(--panel-info-bg); margin: 12px 0; padding: 12px 16px; border-radius: 0 4px 4px 0; }
+  #TOC { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 16px 22px; margin-bottom: 28px; }
+  #TOC ul { list-style: none; padding-left: 16px; }
+  #TOC > ul { padding-left: 0; }
+  #TOC a { color: var(--text-link); }
+  .header-section-number { color: var(--text-secondary); margin-right: 6px; }
+  .confluence-info-panel { border-left: 3px solid var(--panel-info-border); background: var(--panel-info-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  .confluence-warning-panel { border-left: 3px solid var(--panel-warn-border); background: var(--panel-warn-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  .confluence-error-panel { border-left: 3px solid var(--panel-error-border); background: var(--panel-error-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  nav { background: var(--bg-secondary); padding: 10px 16px; margin-bottom: 20px; border-bottom: 2px solid var(--panel-info-border); font-size: 13px; border-radius: 0; }
+  nav a { color: var(--text-link); font-weight: 500; }
+  strong { font-weight: 600; }
+  @media (max-width: 735px) { body { font-size: 14px; padding: 0 16px; } h1 { font-size: 24px; } h2 { font-size: 19px; } }
+</style>
+
+<style id="site-chrome-fix">body{padding-top:0!important}#site-header+nav,#site-header+*{margin-top:12px}</style>
+</head>
+<body>
+<nav>
+  <a href="00_parent_overview.html">^ Operating Model Home</a>
+   | <a href="00_parent_overview.html">&lt; Certificate Lifecycle Operating Model</a> | <a href="02_architecture_trust_boundaries.html">Architecture and Trust Boundaries &gt;</a>
+</nav>
+<h1 data-number="4" id="sec:control-system"><span class="header-section-number">4</span> Operating Model as a Control System</h1>
+<p>The operating model is structured as a control system. The central problem is keeping runtime TLS behaviour within acceptable bounds (availability, compatibility, custody, auditability). Split ownership, vendor gates, and changing client truststores all push against this.</p>
+<h2 data-number="4.1" id="canonical-identifiers-and-correlation-keys"><span class="header-section-number">4.1</span> Canonical Identifiers and Correlation Keys</h2>
+<p><strong>Canonical certificate object:</strong> <span class="math display">\[\begin{equation*}
+\mathcal{C} = (\texttt{endpoint\_fqdn}, \texttt{environment}, \texttt{certificate\_role})
+\end{equation*}\]</span></p>
+<p>All automation, tickets, evidence, and telemetry correlate to <span class="math inline">\(\mathcal{C}\)</span> and the inventory <code>record_id</code>. A signal that cannot be joined to <span class="math inline">\(\mathcal{C}\)</span> is operationally useless under incident pressure.</p>
+<h2 data-number="4.2" id="control-invariants"><span class="header-section-number">4.2</span> Control Invariants</h2>
+<div id="tab:control-invariants">
+<table style="width:92%;">
+<caption>Hard invariants: the system properties that prevent “quiet” certificate failures.</caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 74%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Invariant</strong></th>
+<th style="text-align: left;"><strong>Statement (enforceable)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">I1: Runtime truth</td>
+<td style="text-align: left;">“Deployed” means the <em>served</em> leaf fingerprint is observed via SNI probe; portal/inventory values are advisory until proven by runtime evidence</td>
+</tr>
+<tr>
+<td style="text-align: left;">I2: No split-brain</td>
+<td style="text-align: left;">For each <span class="math inline">\(\mathcal{C}\)</span>, exactly one controller is authoritative to mutate the live TLS material at any time (manual, operator/REST, or cert-manager)</td>
+</tr>
+<tr>
+<td style="text-align: left;">I3: Gate closure</td>
+<td style="text-align: left;">No change record can close without the deployment safety-gate artefacts (Table <a href="#tab:deploy-gate" data-reference-type="ref" data-reference="tab:deploy-gate">18</a>); restart is exception-managed</td>
+</tr>
+<tr>
+<td style="text-align: left;">I4: Custody boundary</td>
+<td style="text-align: left;">Private keys never cross custody domains; inventory and workflows handle metadata only</td>
+</tr>
+<tr>
+<td style="text-align: left;">I5: Approval boundary</td>
+<td style="text-align: left;">PKI/DCERTS remains R/A for issuance approval across all transports (portal/REST/ACME); automation may route and track but must not auto-approve</td>
+</tr>
+<tr>
+<td style="text-align: left;">I6: Correlation or it did not happen</td>
+<td style="text-align: left;">Every alert, ticket, evidence pack, and probe output must carry <span class="math inline">\(\mathcal{C}\)</span> and <code>record_id</code> (or be rejected/triaged as “untracked”)</td>
+</tr>
+<tr>
+<td style="text-align: left;">I7: Domain authorisation</td>
+<td style="text-align: left;">No SAN/FQDN addition or change without authorisation evidence attached to <span class="math inline">\(\mathcal{C}\)</span>; authorisation artefact must reference ownership proof and validation method</td>
+</tr>
+<tr>
+<td style="text-align: left;">I8: Trust profile explicitness</td>
+<td style="text-align: left;">Every <span class="math inline">\(\mathcal{C}\)</span> declares <code>server_trust_profile_id</code> and, if mTLS is enabled, <code>client_trust_bundle_id</code>; defaults must be explicit (no implicit “any CA”)</td>
+</tr>
+<tr>
+<td style="text-align: left;">I9: Assertion contract versioned</td>
+<td style="text-align: left;">OGW-facing asserted attributes are versioned (<code>assertion_contract_version</code>) and evidence-backed; no attribute may be asserted without a defined verification procedure</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Figure <a href="#fig:control-feedback-loop" data-reference-type="ref" data-reference="fig:control-feedback-loop">3</a> visualises the operating model as a closed-loop control system. Runtime observations drive gate evaluation, state transitions, and evidence capture in a continuous feedback cycle.</p>
+<figure id="fig:control-feedback-loop" data-latex-placement="H">
+<div class="mxgraph" style="max-width:100%;margin:16px 0;" data-mxgraph="{&quot;url&quot;: &quot;drawio/fig03_control_feedback_loop.drawio&quot;, &quot;toolbar&quot;: &quot;zoom&quot;, &quot;resize&quot;: true, &quot;nav&quot;: false, &quot;border&quot;: 10, &quot;check-visible-state&quot;: false}"></div>
+
+</figure>
+<h2 data-number="4.3" id="lifecycle-state-machine-execution-semantics"><span class="header-section-number">4.3</span> Lifecycle state machine (execution semantics)</h2>
+<p>The operating model is implemented as a state machine over <span class="math inline">\(\mathcal{C}\)</span>. These four machines compress the 36 patterns into an executable system.</p>
+<div id="tab:control-state-machine">
+<table>
+<caption>State machine for certificate lifecycle execution (per <span class="math inline">\(\mathcal{C}\)</span>).</caption>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>State</strong></th>
+<th style="text-align: left;"><strong>Entry condition</strong></th>
+<th style="text-align: left;"><strong>Exit condition (gated)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">TRIAGE</td>
+<td style="text-align: left;">Alert/scan indicates expiry/handshake/chain issue</td>
+<td style="text-align: left;">Owner assigned; <code>record_id</code> exists; classification set</td>
+</tr>
+<tr>
+<td style="text-align: left;">REQUEST_READY</td>
+<td style="text-align: left;">CSR prepared and linted</td>
+<td style="text-align: left;">DCERTS request submitted with evidence pointer; routed to PKI/DCERTS</td>
+</tr>
+<tr>
+<td style="text-align: left;">PENDING_APPROVAL</td>
+<td style="text-align: left;">DCERTS request exists</td>
+<td style="text-align: left;">Approved/issued by PKI/DCERTS or rejected</td>
+</tr>
+<tr>
+<td style="text-align: left;">ISSUED</td>
+<td style="text-align: left;">Leaf+chain available; identifiers captured</td>
+<td style="text-align: left;">G2 post-issuance validation passes (Section <a href="#sec:cert-lint-gate" data-reference-type="ref" data-reference="sec:cert-lint-gate">11.2</a>): for renewals, KUDOS Compare validates chain/algorithm + parallel AIA/CRL probe; for onboardings, standalone cert lint then KUDOS Compare. ORR form submitted and risk score returned. Score <span class="math inline">\(\geq 60\)</span>: PKI Ops review via ORR Jira (<code>[orr_jira_created]</code>) required. Score <span class="math inline">\(&lt;60\)</span>: exit directly.</td>
+</tr>
+<tr>
+<td style="text-align: left;">DEPLOYING</td>
+<td style="text-align: left;">ORR cleared; change window opened; controller authority asserted</td>
+<td style="text-align: left;">Canary deployed; rollback artefacts staged</td>
+</tr>
+<tr>
+<td style="text-align: left;">VERIFIED</td>
+<td style="text-align: left;">Canary serving new fingerprint</td>
+<td style="text-align: left;">Safety gate passes</td>
+</tr>
+<tr>
+<td style="text-align: left;">CLOSED</td>
+<td style="text-align: left;">Evidence pack complete; inventory updated; DCERTS portal deployment confirmed</td>
+<td style="text-align: left;">Monitoring confirms stability</td>
+</tr>
+</tbody>
+</table>
+</div>
+<figure id="fig:state-transition" data-latex-placement="H">
+<div class="mxgraph" style="max-width:100%;margin:16px 0;" data-mxgraph="{&quot;url&quot;: &quot;drawio/fig04_state_transition.drawio&quot;, &quot;toolbar&quot;: &quot;zoom&quot;, &quot;resize&quot;: true, &quot;nav&quot;: false, &quot;border&quot;: 10, &quot;check-visible-state&quot;: false}"></div>
+
+</figure>
+<h2 data-number="4.4" id="controller-authority-model-anti-race-condition-rule"><span class="header-section-number">4.4</span> Controller authority model (anti-race-condition rule)</h2>
+<p>Controller conflicts are a dominant root cause for certificate incidents in automated estates (key overwrite, competing renewals, non-deterministic rollback). The authority model makes this explicit:</p>
+<ul>
+<li><p><strong>Authority is per <span class="math inline">\(\mathcal{C}\)</span>:</strong> one authoritative writer for the live TLS material (manual process, operator/REST, or cert-manager).</p></li>
+<li><p><strong>Authority is switched only by protocol:</strong> cutovers must follow the handoff checklist in Section <a href="#sec:controller-handoff" data-reference-type="ref" data-reference="sec:controller-handoff">8.1.1</a> (freeze, disable old writer, re-issue under new controller, prove by fingerprint).</p></li>
+<li><p><strong>Dual-run is permitted only on disjoint objects:</strong> multiple controllers may exist in the estate, but must operate on non-overlapping <span class="math inline">\(\mathcal{C}\)</span> sets.</p></li>
+</ul>
+<h2 data-number="4.5" id="sec:machines"><span class="header-section-number">4.5</span> Execution Architecture</h2>
+<p>The patterns compress into four composable machines. Each machine can be partially or fully automated while preserving the invariants in Table <a href="#tab:control-invariants" data-reference-type="ref" data-reference="tab:control-invariants">4</a>.</p>
+<h3 data-number="4.5.1" id="m1-triage-machine-alerts-rightarrow-ownership-rightarrow-classification"><span class="header-section-number">4.5.1</span> M1: Triage Machine (alerts <span class="math inline">\(\rightarrow\)</span> ownership <span class="math inline">\(\rightarrow\)</span> classification)</h3>
+<p><strong>Inputs:</strong> DCERTS notifications; synthetic probe alerts; incident tickets; KUDOS Compare pre-renewal risk baseline (comparison of expiring certificate against inventory record).</p>
+<p><strong>Outputs:</strong> a tracked object <span class="math inline">\(\mathcal{C}\)</span> with <code>record_id</code>; <code>owner_team</code>; SLA classification (Table <a href="#tab:slos" data-reference-type="ref" data-reference="tab:slos">21</a>); pre-renewal risk assessment attached to <code>record_id</code>.</p>
+<p><strong>Gates:</strong></p>
+<ul>
+<li><p>If <code>owner_team</code> cannot be assigned, the system is in a “blind” state: escalation is mandatory (no silent backlog).</p></li>
+<li><p>If <code>record_id</code> does not exist, the incident is operationally uncorrelatable: create it first (or treat as a defect in inventory integrity).</p></li>
+</ul>
+<h3 data-number="4.5.2" id="m2-issuance-machine-csr-lint-rightarrow-approval-rightarrow-issued-artefact-normalisation"><span class="header-section-number">4.5.2</span> M2: Issuance Machine (CSR lint <span class="math inline">\(\rightarrow\)</span> approval <span class="math inline">\(\rightarrow\)</span> issued artefact normalisation)</h3>
+<p><strong>Inputs:</strong> CSR + metadata for <span class="math inline">\(\mathcal{C}\)</span> (SAN set, CA profile, change record).</p>
+<p><strong>Known constraint:</strong> Cequence support may deliver CSRs as compressed archives with nested zip structures. The CSR lint gate input normalisation step must handle archive extraction before validation. Format standardisation with the vendor is a coordination item.</p>
+<p><strong>Outputs:</strong> issued leaf+chain artefacts; DCERTS request/transaction identifiers; captured NotBefore/NotAfter, serial, issuer chain identifiers.</p>
+<p><strong>Gates:</strong></p>
+<ul>
+<li><p>G1: CSR lint gate must pass before submission (Table <a href="#tab:csr-lint" data-reference-type="ref" data-reference="tab:csr-lint">17</a>).</p></li>
+<li><p>Approval boundary is strict: PKI/DCERTS approval remains mandatory (Invariant I5).</p></li>
+<li><p>G2: Post-issuance validation + ORR risk assessment must pass before deployment (Section <a href="#sec:cert-lint-gate" data-reference-type="ref" data-reference="sec:cert-lint-gate">11.2</a>, Section <a href="#sec:orr-gate" data-reference-type="ref" data-reference="sec:orr-gate">4.5.3</a>).</p></li>
+</ul>
+<h3 data-number="4.5.3" id="sec:orr-gate"><span class="header-section-number">4.5.3</span> ORR Gate: Post-Issuance Risk Assessment (blocking)</h3>
+<p>After issuance, the G2 gate validates the certificate and assesses deployment risk. No certificate reaches production without G2 clearance. For renewals, KUDOS Compare provides integrated chain/algorithm validation alongside risk scoring. For onboardings, standalone cert lint (Section <a href="#sec:cert-lint-gate" data-reference-type="ref" data-reference="sec:cert-lint-gate">11.2</a>) runs first. “PKI Ops” refers to the PKI/DCERTS operations team (the same entity referenced in Invariant I5).</p>
+<p><strong>Mechanism:</strong> The KUDOS Compare API (<code>/api/compare</code>) accepts old and new certificates (PEM-encoded) and returns a risk score (integer) plus a findings array (field-level differences with severity tags such as <code>INFO</code>). The compare output feeds the ORR autofill URL via query parameters (serial number, chain status, algorithm status). Rundeck then submits the populated ORR form to the Confluence-hosted ORR workflow. The certificate comparison and the ORR submission are distinct steps: the former produces the risk assessment, the latter acts on it.</p>
+<p><strong>Risk branching:</strong></p>
+<ul>
+<li><p>Risk score <span class="math inline">\(&lt; 60\)</span> (low risk): ORR clears automatically. No ORR Jira ticket created (per SHO-4039). Proceeds to M3.</p></li>
+<li><p>Risk score <span class="math inline">\(\geq 60\)</span> (high risk): PKI Ops receives the assessment, creates an ORR Jira ticket (<code>[orr_jira_created]</code>), and reviews the deployment. PKI Ops approval is required before transition to M3.</p></li>
+</ul>
+<p><strong>Orchestration note:</strong> Two distinct Jira tickets may exist for a single <span class="math inline">\(\mathcal{C}\)</span>: the CERTLIFECYCLE ticket (created by Rundeck at triage, always present) and the ORR ticket (created only for high-risk assessments). Both carry <code>record_id</code> for correlation.</p>
+<p><strong>Constraint:</strong> The ORR gate is <em>blocking</em>; deployment cannot proceed without a risk score. Timeout and SLA handling are implementation-level concerns documented in the integration specification.</p>
+<p><strong>Integrated validation model (renewals):</strong> For renewals, the ORR step subsumes standalone cert lint. KUDOS Compare validates chain status and algorithm compliance for both old and new certificates as part of its comparison. An AIA/CRL reachability probe runs in parallel (a network check that no comparison API can perform). Together, these satisfy the G2 validation specification (Section <a href="#sec:cert-lint-gate" data-reference-type="ref" data-reference="sec:cert-lint-gate">11.2</a>) without a separate lint gate.</p>
+<p><strong>Renewal flow:</strong> extract served cert from defender traffic headers (oldCert) <span class="math inline">\(\rightarrow\)</span> retrieve newly issued cert from DCERTS API (newCert) <span class="math inline">\(\rightarrow\)</span> KUDOS Compare (validates both, computes risk score) + parallel AIA/CRL probe <span class="math inline">\(\rightarrow\)</span> ORR submission.</p>
+<p><strong>Onboarding flow:</strong> no existing cert for comparison. Standalone cert lint runs first (Section <a href="#sec:cert-lint-gate" data-reference-type="ref" data-reference="sec:cert-lint-gate">11.2</a>), then KUDOS Compare runs against a reference baseline certificate.</p>
+<p><strong>Preconditions (must be verified before adopting integrated model):</strong></p>
+<ul>
+<li><p>Traffic header contains the full leaf certificate (not truncated) and is consistently present across all defender configurations.</p></li>
+<li><p>KUDOS Compare coverage is confirmed against every check in Section <a href="#sec:cert-lint-gate" data-reference-type="ref" data-reference="sec:cert-lint-gate">11.2</a> (chain completeness, algorithm compliance, intermediate expiry). Any gap means standalone lint must remain.</p></li>
+<li><p>AIA/CRL reachability is checked as a parallel probe, not delegated to KUDOS Compare.</p></li>
+</ul>
+<p><strong>Fallback:</strong> Until KUDOS Compare coverage is empirically verified, standalone cert lint (Section <a href="#sec:cert-lint-gate" data-reference-type="ref" data-reference="sec:cert-lint-gate">11.2</a>) runs as a separate step before KUDOS Compare. The three-gate model (G1: CSR lint, G2: post-issuance validation + ORR, G3: deployment safety gate) applies regardless of whether cert lint is standalone or integrated.</p>
+<h3 data-number="4.5.4" id="m3-deploymentverification-machine-canary-rightarrow-fingerprint-rollout-rightarrow-slo-validation"><span class="header-section-number">4.5.4</span> M3: Deployment/Verification Machine (canary <span class="math inline">\(\rightarrow\)</span> fingerprint rollout <span class="math inline">\(\rightarrow\)</span> SLO validation)</h3>
+<p><strong>Inputs:</strong> certificate package (leaf+chain); rollback package; deployment targets; G2 clearance (low risk: automatic; high risk: PKI Ops approval via ORR Jira).</p>
+<p><strong>Outputs:</strong> new served fingerprint observed; handshake success/latency time series; DCERTS portal deployment confirmation (manual portal update recording deployment completion).</p>
+<p><strong>Gates:</strong> G3 deployment safety gate (Table <a href="#tab:deploy-gate" data-reference-type="ref" data-reference="tab:deploy-gate">18</a>) and evidence mapping (Table <a href="#tab:evidence-checklist-deploy-gate" data-reference-type="ref" data-reference="tab:evidence-checklist-deploy-gate">19</a>). DCERTS deployment confirmation is orthogonal to G2; it is a bookkeeping step performed after verification passes.</p>
+<h3 data-number="4.5.5" id="m4-emergency-machine-freeze-rightarrow-expedited-issuance-rightarrow-minimum-viable-proof"><span class="header-section-number">4.5.5</span> M4: Emergency Machine (freeze <span class="math inline">\(\rightarrow\)</span> expedited issuance <span class="math inline">\(\rightarrow\)</span> minimum viable proof)</h3>
+<p><strong>Inputs:</strong> incident declaration with scoped fingerprints/issuers/SNI.</p>
+<p><strong>Outputs:</strong> freeze asserted; emergency issuance request; minimum evidence artefacts to re-establish safe runtime.</p>
+<p><strong>Gates:</strong> emergency patterns E1–E3 in Section <a href="#sec:runbooks" data-reference-type="ref" data-reference="sec:runbooks">13</a> must remain executable under time pressure; the system is designed so evidence is produced by default rather than “remembered later”.</p>
+<h2 data-number="4.6" id="sec:evidence-ledger"><span class="header-section-number">4.6</span> Append-only Evidence Ledger</h2>
+<p>A certificate operating model fails when teams can <em>say</em> a control happened without leaving a reliable trail. Evidence is therefore treated as a first-class data product.</p>
+<p><strong>Ledger concept:</strong> an append-only sequence of entries capturing the runtime truth and the verification work that produced it. Each entry is immutable and hash-addressable.</p>
+<p><strong>Implementation direction:</strong> The project owner mandated an immutable ledger. The leading candidate is a git-based audit log: every certificate lifecycle event committed as an append-only JSON record to a dedicated GitLab repository. This approach has zero licensing cost, is inherently immutable, and aligns with the Rundeck + GitLab architecture. Alternative candidates (PostgreSQL with append-only triggers, Azure Event Hubs, AWS QLDB) remain under evaluation. The ledger is separate from the SharePoint Lists operational inventory; inventory tracks live state, the ledger provides tamper-evident history.</p>
+<div id="tab:evidence-ledger">
+<table>
+<caption>Evidence ledger: minimum fields for tamper-evident operational truth.</caption>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Field</strong></th>
+<th style="text-align: left;"><strong>Type</strong></th>
+<th style="text-align: left;"><strong>Purpose</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">ledger_ts</td>
+<td style="text-align: left;">DateTime</td>
+<td style="text-align: left;">Ordering and incident correlation</td>
+</tr>
+<tr>
+<td style="text-align: left;">record_id</td>
+<td style="text-align: left;">UUID</td>
+<td style="text-align: left;">Stable join key to inventory and tickets</td>
+</tr>
+<tr>
+<td style="text-align: left;">canonical_object</td>
+<td style="text-align: left;">Tuple</td>
+<td style="text-align: left;"><span class="math inline">\(\mathcal{C}\)</span> = (fqdn, environment, certificate_role)</td>
+</tr>
+<tr>
+<td style="text-align: left;">actor_id</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: left;">Human or controller identity</td>
+</tr>
+<tr>
+<td style="text-align: left;">probe_cmd_hash</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: left;">Hash of command/script used (reproducibility)</td>
+</tr>
+<tr>
+<td style="text-align: left;">probe_out_hash</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: left;">Hash of stdout/stderr (tamper evidence)</td>
+</tr>
+<tr>
+<td style="text-align: left;">served_fingerprint</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: left;">Runtime truth for “what is deployed”</td>
+</tr>
+<tr>
+<td style="text-align: left;">notAfter_observed</td>
+<td style="text-align: left;">DateTime</td>
+<td style="text-align: left;">Runtime NotAfter via probe (drift detection)</td>
+</tr>
+<tr>
+<td style="text-align: left;">notes</td>
+<td style="text-align: left;">String</td>
+<td style="text-align: left;">Optional reason codes / exception reference</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Pragmatic implementation note:</strong> the ledger can be implemented in multiple backends. The requirement is the semantics (append-only, immutable history, and hashes), not a particular product.</p>
+<p>Figure <a href="#fig:evidence-flow" data-reference-type="ref" data-reference="fig:evidence-flow">5</a> shows the evidence capture and audit trail architecture. Artefacts flow from control gates to the compliance-ready ledger.</p>
+<figure id="fig:evidence-flow" data-latex-placement="H">
+<div class="mxgraph" style="max-width:100%;margin:16px 0;" data-mxgraph="{&quot;url&quot;: &quot;drawio/fig05_evidence_audit_trail.drawio&quot;, &quot;toolbar&quot;: &quot;zoom&quot;, &quot;resize&quot;: true, &quot;nav&quot;: false, &quot;border&quot;: 10, &quot;check-visible-state&quot;: false}"></div>
+
+</figure>
+<h2 data-number="4.7" id="sec:acme-safety"><span class="header-section-number">4.7</span> ACME Migration Safety Requirements</h2>
+<p>ACME adoption changes the control plane. This model treats it as a safety-critical migration because it changes (a) who can write TLS material, (b) how keys are generated, and (c) how renewals are triggered.</p>
+<p><strong>Safety property:</strong> migrating issuance backends MUST NOT weaken the invariants in Table <a href="#tab:control-invariants" data-reference-type="ref" data-reference="tab:control-invariants">4</a>. Therefore, any transition (manual <span class="math inline">\(\rightarrow\)</span> REST/operator <span class="math inline">\(\rightarrow\)</span> ACME/cert-manager) is gated by:</p>
+<ul>
+<li><p>Controller handoff protocol execution (Section <a href="#sec:controller-handoff" data-reference-type="ref" data-reference="sec:controller-handoff">8.1.1</a>).</p></li>
+<li><p>Runtime proof: served fingerprint roll-forward after cutover.</p></li>
+<li><p>A rollback path that returns authority to the previous controller without ambiguity.</p></li>
+</ul>
+<h2 data-number="4.8" id="implementation-realism"><span class="header-section-number">4.8</span> Implementation realism</h2>
+<p>The control-system framing is compatible with current constraints: no Zendesk API automation, ACME blocked, split custody, and mandatory PKI/DCERTS approvals. It yields immediate risk reduction by making failure states visible (runtime truth, no split-brain, gated closure) even when issuance remains partially manual.</p>
+<p>The ORR gate (Section <a href="#sec:orr-gate" data-reference-type="ref" data-reference="sec:orr-gate">4.5.3</a>) operates within the existing manual workflow; the KUDOS Compare API and ORR form are already operational tools. The Rundeck + GitLab hybrid (under evaluation) adds auditability and version control without new infrastructure. The git-based ledger candidate uses the same GitLab instance. Each integration adds control surface without requiring the blocked ACME path.</p>
+<h1 data-number="5" id="standards-baseline"><span class="header-section-number">5</span> Standards Baseline</h1>
+<h2 data-number="5.1" id="nist-and-iso-control-mapping"><span class="header-section-number">5.1</span> NIST and ISO Control Mapping</h2>
+<p><a href="#tab:standards-mapping" data-reference-type="ref" data-reference="tab:standards-mapping">[tab:standards-mapping]</a> maps NIST SP 800-204 series and ISO/IEC 27002:2022 controls to certificate lifecycle relevance. NIST SP 800-204B Section 4.3 provides additional guidance on SAN-bound service identities, restart-free certificate rotation, and HSM-backed private key protection. NIST publications serve as design guidance. MUST/SHALL statements in this document are proposed internal engineering controls, pending formal adoption by GRC or security architecture authority.</p>
+<div class="tabular">
+<p><span>@p<span>0.18</span>p<span>0.74</span>@</span> <strong>Standard</strong> &amp; <strong>Certificate Lifecycle Relevance</strong><br />
+<br />
+SP 800-204 &amp; Service identity and authentication patterns<br />
+SP 800-204A &amp; mTLS implementation, sidecar proxy certificate requirements<br />
+SP 800-204B &amp; Certificate-based ABAC, SAN-based identity mapping<br />
+SP 800-204C &amp; Automated certificate rotation in CI/CD, secrets management<br />
+<br />
+8.24 Cryptography &amp; Key type selection, algorithm strength, validity periods<br />
+8.25 Secure SDLC &amp; CSR validation gates, chain linting, deployment verification<br />
+8.26 App security &amp; mTLS requirements, SAN policy enforcement<br />
+8.27 Secure arch. &amp; Split-custody model, trust boundary definition<br />
+8.28 Secure coding &amp; Secrets handling in CI/CD, EAB key protection<br />
+</p>
+</div>
+<h2 data-number="5.2" id="australian-telecommunications-compliance-non-normative-prompts"><span class="header-section-number">5.2</span> Australian Telecommunications Compliance (Non-normative prompts)</h2>
+<p>This subsection is <strong>not a compliance baseline</strong>. It contains non-normative prompts (questions to validate) that surface where certificate operations could be relevant to telecommunications regulation. It must not be used as a requirements source, audit baseline, or control catalogue until validated by Legal/Compliance and evidenced for the specific service/environment.</p>
+<p><strong>Potential intersections to validate (not requirements):</strong></p>
+<ul>
+<li><p><strong>Security of Critical Infrastructure Act 2018 (SOCI):</strong> Confirm whether the relevant services/assets are in scope, and whether certificate/key operations are implicated in any applicable obligations.</p></li>
+<li><p><strong>ACMA carrier licence / reporting conditions:</strong> Confirm whether certificate-driven availability incidents change reporting thresholds, notification timelines, or incident classification requirements.</p></li>
+<li><p><strong>Telecommunications (Interception and Access) Act 1979:</strong> Confirm whether private key handling, privileged access, and logging/audit controls have any specific expectations or constraints under TIA-related obligations.</p></li>
+</ul>
+<p><em>Any downstream “MUST/SHALL” statements must be sourced from validated Legal/Compliance advice and the applicable regulatory text, and recorded with service-specific evidence.</em></p>
+
+<script type="text/javascript" src="https://viewer.diagrams.net/js/viewer-static.min.js"></script>
+<script defer src="assets/download-injector.js"></script>
+</body>
+</html>

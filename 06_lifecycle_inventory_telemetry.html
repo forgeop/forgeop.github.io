@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Security Architecture and Engineering L4 SecEng Team Telstra Group" />
+  <title>Certificate Lifecycle Operating Model</title>
+  
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+
+
+<title>Lifecycle Stages, Inventory and Telemetry</title>
+<style>
+  :root { --text-primary: #1d1d1f; --text-secondary: #6e6e73; --text-link: #0066cc; --bg-primary: #fff; --bg-secondary: #f5f5f7; --bg-code: #f5f5f7; --border: #d2d2d7; --panel-info-bg: #e8f0fe; --panel-info-border: #4285f4; --panel-warn-bg: #fef7e0; --panel-warn-border: #f9ab00; --panel-error-bg: #fce8e6; --panel-error-border: #d93025; }
+  body { font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.52947; color: var(--text-primary); max-width: 980px; margin: 0 auto; padding: 0 22px; background: var(--bg-primary); -webkit-font-smoothing: antialiased; }
+  h1 { font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 28px; font-weight: 600; color: var(--text-primary); letter-spacing: .007em; line-height: 1.14286; margin: 40px 0 12px 0; }
+  h2 { font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 22px; font-weight: 600; color: var(--text-primary); letter-spacing: .016em; line-height: 1.18182; margin: 32px 0 8px 0; }
+  h3 { font-size: 17px; font-weight: 600; color: var(--text-primary); letter-spacing: -.022em; line-height: 1.23536; margin: 24px 0 6px 0; }
+  h4 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 16px 0 4px 0; }
+  p { margin: 8px 0; }
+  a { color: var(--text-link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 13px; }
+  th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--bg-secondary); font-weight: 600; color: var(--text-primary); }
+  tr:nth-child(even) { background: #fafafa; }
+  code { font-family: "SF Mono", SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace; font-size: 12px; background: var(--bg-code); padding: 2px 5px; border-radius: 4px; color: var(--text-primary); }
+  pre { background: var(--bg-code); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; overflow-x: auto; font-size: 12px; line-height: 1.6; }
+  pre code { background: none; padding: 0; }
+  figure { margin: 20px 0; text-align: center; }
+  figcaption { font-size: 12px; color: var(--text-secondary); margin-top: 8px; font-style: italic; line-height: 1.4; }
+  img { max-width: 100%; height: auto; border-radius: 4px; }
+  ul, ol { padding-left: 22px; margin: 8px 0; }
+  li { margin-bottom: 4px; }
+  blockquote { border-left: 3px solid var(--panel-info-border); background: var(--panel-info-bg); margin: 12px 0; padding: 12px 16px; border-radius: 0 4px 4px 0; }
+  #TOC { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 16px 22px; margin-bottom: 28px; }
+  #TOC ul { list-style: none; padding-left: 16px; }
+  #TOC > ul { padding-left: 0; }
+  #TOC a { color: var(--text-link); }
+  .header-section-number { color: var(--text-secondary); margin-right: 6px; }
+  .confluence-info-panel { border-left: 3px solid var(--panel-info-border); background: var(--panel-info-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  .confluence-warning-panel { border-left: 3px solid var(--panel-warn-border); background: var(--panel-warn-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  .confluence-error-panel { border-left: 3px solid var(--panel-error-border); background: var(--panel-error-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  nav { background: var(--bg-secondary); padding: 10px 16px; margin-bottom: 20px; border-bottom: 2px solid var(--panel-info-border); font-size: 13px; border-radius: 0; }
+  nav a { color: var(--text-link); font-weight: 500; }
+  strong { font-weight: 600; }
+  @media (max-width: 735px) { body { font-size: 14px; padding: 0 16px; } h1 { font-size: 24px; } h2 { font-size: 19px; } }
+</style>
+
+<style id="site-chrome-fix">body{padding-top:0!important}#site-header+nav,#site-header+*{margin-top:12px}</style>
+</head>
+<body>
+<nav>
+  <a href="00_parent_overview.html">^ Operating Model Home</a>
+   | <a href="05_secrets_management.html">&lt; Secrets Management</a> | <a href="07_gates_risk_runbooks.html">Gates, Risk and Runbooks &gt;</a>
+</nav>
+<h1 data-number="10" id="certificate-lifecycle-stages"><span class="header-section-number">10</span> Certificate Lifecycle Stages</h1>
+<h2 data-number="10.1" id="end-to-end-lifecycle-swimlane"><span class="header-section-number">10.1</span> End-to-End Lifecycle Swimlane</h2>
+<p><a href="#fig:lifecycle-swimlane" data-reference-type="ref" data-reference="fig:lifecycle-swimlane">13</a> presents the complete certificate lifecycle with custody boundaries and control gates.</p>
+<figure id="fig:lifecycle-swimlane" data-latex-placement="H">
+
+
+</figure>
+<h2 data-number="10.2" id="pattern-coverage-across-lifecycle-stages"><span class="header-section-number">10.2</span> Pattern Coverage Across Lifecycle Stages</h2>
+<div id="tab:pattern-stage-mapping">
+<table style="width:80%;">
+<caption>Pattern-to-stage mapping (each pattern must map to one or more lifecycle stages; gates are explicitly enforced at stages 2, 3, and 5).</caption>
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 7%" />
+<col style="width: 7%" />
+<col style="width: 7%" />
+<col style="width: 7%" />
+<col style="width: 7%" />
+<col style="width: 7%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Pattern / control</strong></th>
+<th style="text-align: left;"><strong>1</strong></th>
+<th style="text-align: left;"><strong>2</strong></th>
+<th style="text-align: left;"><strong>3</strong></th>
+<th style="text-align: left;"><strong>4</strong></th>
+<th style="text-align: left;"><strong>5</strong></th>
+<th style="text-align: left;"><strong>6</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">P1. Approved key custody + non-sharing rule (split custody preserved)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">P2. G1: CSR lint gate (SAN allowlist, key algo/size, EKU, subject policy)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">P3. G2: Post-issuance validation + ORR risk assessment (chain validation, KUDOS Compare, AIA/CRL probe)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">P4. Progressive rollout + rollback readiness (canary, fingerprints, RTO target)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">P5. Post-deploy validation gate (SNI/SAN match, mTLS known-good/known-bad, handshake SLO)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">P6. Continuous monitoring + renewal trigger loop (tiered expiry alerts + correlation to inventory)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">P7. Metadata inventory as synchronisation surface (authoritative planning + incident correlation)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 data-number="10.3" id="sec:pattern-categories"><span class="header-section-number">10.3</span> Pattern Categories (Coverage Checklist)</h2>
+<h2 data-number="10.4" id="roles-and-responsibilities-raci"><span class="header-section-number">10.4</span> Roles and Responsibilities (RACI)</h2>
+<div id="tab:raci-summary">
+<table style="width:32%;">
+<caption>RACI summary for split-custody certificate lifecycle.</caption>
+<colgroup>
+<col style="width: 32%" />
+<col />
+<col />
+<col />
+<col />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Activity</strong></th>
+<th style="text-align: center;"><strong>Cequence</strong></th>
+<th style="text-align: center;"><strong>OKAPI</strong></th>
+<th style="text-align: center;"><strong>PKI</strong></th>
+<th style="text-align: center;"><strong>SRE</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Key generation (edge)</td>
+<td style="text-align: center;">R/A</td>
+<td style="text-align: center;">I</td>
+<td style="text-align: center;">I</td>
+<td style="text-align: center;">C</td>
+</tr>
+<tr>
+<td style="text-align: left;">Key generation (origin)</td>
+<td style="text-align: center;">I</td>
+<td style="text-align: center;">R/A</td>
+<td style="text-align: center;">I</td>
+<td style="text-align: center;">C</td>
+</tr>
+<tr>
+<td style="text-align: left;">CSR linting</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">C</td>
+</tr>
+<tr>
+<td style="text-align: left;">Issuance approval</td>
+<td style="text-align: center;">I</td>
+<td style="text-align: center;">I</td>
+<td style="text-align: center;">R/A</td>
+<td style="text-align: center;">I</td>
+</tr>
+<tr>
+<td style="text-align: left;">Certificate request submission</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">I</td>
+</tr>
+<tr>
+<td style="text-align: left;">Deploy certificate package</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">I</td>
+<td style="text-align: center;">C</td>
+</tr>
+<tr>
+<td style="text-align: left;">Post-deploy verification</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">I</td>
+<td style="text-align: center;">C</td>
+</tr>
+<tr>
+<td style="text-align: left;">Expiry monitoring and alerting</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">I</td>
+<td style="text-align: center;">C</td>
+</tr>
+<tr>
+<td style="text-align: left;">Revocation / emergency re-issue</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">R/A</td>
+<td style="text-align: center;">C</td>
+</tr>
+<tr>
+<td style="text-align: left;">Inventory updates (metadata)</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">I</td>
+<td style="text-align: center;">C</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Coordination model:</strong> In this RACI, “Cequence R” means the Cequence SaaS vendor (Cequence Ops) executes the action; SecEng coordinates, reviews evidence, and maintains the operating model. SecEng does not generate keys or deploy certificates directly.</p>
+<p><strong>Approval routing requirement:</strong> Cequence/OKAPI teams may generate keys, create CSRs, and <em>submit</em> certificate requests; however, issuance does <strong>not</strong> auto-complete. Every request must enter the DCERTS workflow and remain pending until <strong>PKI/DCERTS approves and issues</strong> the certificate. This applies equally to manual portal, DCERTS REST automation, and any future ACME/cert-manager path. For emergency revocation or emergency re-issue, <strong>PKI/DCERTS remains R/A</strong> and must be engaged as part of the incident runbook.</p>
+<p>Figure <a href="#fig:raci-swimlane" data-reference-type="ref" data-reference="fig:raci-swimlane">14</a> visualises the RACI table as a swimlane diagram showing responsibility handoffs across the certificate lifecycle.</p>
+<figure id="fig:raci-swimlane" data-latex-placement="H">
+<div class="mxgraph" style="max-width:100%;margin:16px 0;" data-mxgraph="{&quot;url&quot;: &quot;drawio/fig14_raci_swimlane.drawio&quot;, &quot;toolbar&quot;: &quot;zoom&quot;, &quot;resize&quot;: true, &quot;nav&quot;: false, &quot;border&quot;: 10, &quot;check-visible-state&quot;: false}"></div>
+
+</figure>
+<h2 data-number="10.5" id="certificate-inventory-schema"><span class="header-section-number">10.5</span> Certificate Inventory Schema</h2>
+<p>The certificate inventory is the target-state authoritative source of truth for renewal planning, incident response, and automation. A spreadsheet or Confluence table may serve as a bootstrap implementation. It remains non-authoritative until integrity controls are in place: a named data owner, restricted write access, immutable change history, validation rules, and a defined reconciliation process with DCERTS and endpoint scan results. Any roadmap item that depends on an “authoritative inventory” applies post-cutover. <a href="#tab:inventory-schema" data-reference-type="ref" data-reference="tab:inventory-schema">[tab:inventory-schema]</a> defines the complete field set.</p>
+<div class="tabular">
+<p><span>@p<span>0.22</span>p<span>0.18</span>p<span>0.52</span>@</span> <strong>Field</strong> &amp; <strong>Type</strong> &amp; <strong>Purpose</strong><br />
+record_id &amp; UUID &amp; Stable identifier for automation and ticket correlation<br />
+owner_team &amp; String &amp; Accountable team for renewal and incident response<br />
+owner_verified_date &amp; DateTime &amp; Date the owner contact was last confirmed valid; triggers re-verification if older than 180 days<br />
+service_name &amp; String &amp; Human-readable mapping to product/API<br />
+environment &amp; Enum &amp; prod, nonprod, test, sandbox<br />
+endpoint_fqdn &amp; String &amp; Customer-facing FQDN (SNI value)<br />
+certificate_role &amp; Enum &amp; server_edge, server_origin, client_mtls, ca_bundle<br />
+subject_dn &amp; String &amp; Subject DN for audit correlation<br />
+san_set &amp; Array[String] &amp; Canonical SAN list with allowlist validation<br />
+issuer_ca &amp; String &amp; Issuer name and chain identifiers<br />
+key_type &amp; Enum &amp; RSA, ECDSA<br />
+key_size &amp; Integer &amp; RSA bits (2048, 3072, 4096) or ECDSA curve (P-256, P-384)<br />
+key_id &amp; String &amp; Key identifier (e.g., SPKI fingerprint) for key reuse/rotation detection<br />
+key_created &amp; DateTime &amp; Key generation timestamp (ISO 8601) for key-age enforcement<br />
+valid_from &amp; DateTime &amp; NotBefore timestamp (ISO 8601)<br />
+valid_to &amp; DateTime &amp; NotAfter timestamp (ISO 8601)<br />
+renewal_target &amp; DateTime &amp; Renewal target aligned to change windows<br />
+key_custody &amp; Enum &amp; HSM, KMS, Vault/secrets_manager; <code>file_based</code> is permitted in the schema only to record legacy/current state and must be exception-managed (migration plan + time-bound risk acceptance)<br />
+deployment_targets &amp; Array[String] &amp; Defenders, gateways, origin pools<br />
+rollback_ref &amp; UUID &amp; Pointer to previous certificate record<br />
+change_record &amp; String &amp; CRQ and ticket identifiers<br />
+telemetry_refs &amp; Array[String] &amp; Dashboard and alert rule identifiers<br />
+server_trust_profile_id &amp; String &amp; Identifier for the approved CA/profile used for server certificate issuance (Invariant I8); must reference an entry in the trust anchor allowlist<br />
+client_trust_bundle_id &amp; String &amp; Identifier for the client-auth trust bundle configured on the terminator (Invariant I8); required if <code>mtls_mode</code> <span class="math inline">\(\neq\)</span> <code>disabled</code><br />
+assertion_contract_version &amp; String &amp; Version of the Cequence<span class="math inline">\(\rightarrow\)</span>OGW assertion contract in effect (Invariant I9); must match between Cequence and OGW configurations<br />
+<br />
+domain_owner &amp; String &amp; Team or entity accountable for the domain (distinct from certificate owner)<br />
+authorising_team &amp; String &amp; Team that approved the domain authorisation<br />
+domain_auth_ref &amp; UUID &amp; Reference to the authorisation evidence record<br />
+domain_phase &amp; Enum &amp; <code>phase_1</code> (Telstra-owned) or <code>phase_2</code> (BYO); controls which gates apply<br />
+auth_valid_until &amp; DateTime &amp; Expiry date of the domain authorisation; triggers re-validation<br />
+domain_registration_expiry &amp; DateTime &amp; DNS registration expiry date (Phase 2 BYO domains only); triggers review if earlier than certificate expiry<br />
+<br />
+mtls_mode &amp; Enum &amp; <code>disabled</code>, <code>optional</code>, <code>required</code>; determines if <code>client_trust_bundle_id</code> is required<br />
+trust_profile_ref &amp; UUID &amp; Reference to the trust profile due diligence record (audit trail)<br />
+review_date &amp; DateTime &amp; Next scheduled review date for the certificate and its trust profile<br />
+decommission_date &amp; DateTime &amp; Planned decommission date; triggers offboarding workflow if set<br />
+</p>
+</div>
+<h3 data-number="10.5.1" id="inventory-enrichment"><span class="header-section-number">10.5.1</span> Inventory enrichment</h3>
+<p>Every workflow that creates or updates an inventory record MUST populate all 34 fields in <a href="#tab:inventory-schema" data-reference-type="ref" data-reference="tab:inventory-schema">[tab:inventory-schema]</a>. DCERTS expiry alerts provide partial data only. Automation must enrich from: (a) certificate parsing (leaf+chain), (b) ownership/deployment lookup tables (CMDB/Confluence), and (c) change-management metadata. The detailed field-by-field sourcing model is maintained in the operational specification on Confluence.</p>
+<h3 data-number="10.5.2" id="pattern-mtls-client-certificate-tracking-certificate_roleclient_mtls"><span class="header-section-number">10.5.2</span> Pattern: mTLS client certificate tracking (<code>certificate_role=client_mtls</code>)</h3>
+<p>Where inbound mTLS is enabled (consumer <span class="math inline">\(\rightarrow\)</span> defender), certificate operations must track <em>client</em> certificates as first-class lifecycle objects rather than assuming a server-only model. Expired or revoked client certificates manifest as handshake failures and must be tracked for incident response. Onboarding patterns that rely on explicit customer identity binding also depend on this tracking.</p>
+<p><strong>Minimum inventory requirements (in addition to <a href="#tab:inventory-schema" data-reference-type="ref" data-reference="tab:inventory-schema">[tab:inventory-schema]</a>):</strong></p>
+<ul>
+<li><p>Record each client certificate (or client certificate <em>class</em>) using <code>certificate_role=client_mtls</code> and the relevant <code>endpoint_fqdn</code> it authenticates to.</p></li>
+<li><p>Populate <code>issuer_ca</code> and <code>valid_to</code> so client-cert expiry can be monitored and correlated to handshake failures.</p></li>
+<li><p>Populate <code>key_custody</code> only where Cequence/OKAPI actually hold the client private key (for most external API consumers this will be <em>external</em> and therefore not applicable; do not invent custody).</p></li>
+</ul>
+<p><strong>Trust anchor tracking (defender-side verification):</strong></p>
+<ul>
+<li><p>Track the client-auth trust anchor (root/intermediate set) used by the defender as <code>ca_bundle</code> role and reference it in <code>deployment_targets</code> (defender pools).</p></li>
+<li><p>Treat changes to this trust bundle as a high-risk change (it can break all client auth). Apply the same deployment safety gate as server cert changes, including a “known-good vs known-bad” mTLS probe (see Table <a href="#tab:deploy-gate" data-reference-type="ref" data-reference="tab:deploy-gate">18</a>).</p></li>
+</ul>
+<figure id="fig:inventory-erd" data-latex-placement="H">
+<div class="mxgraph" style="max-width:100%;margin:16px 0;" data-mxgraph="{&quot;url&quot;: &quot;drawio/fig15_inventory_erd.drawio&quot;, &quot;toolbar&quot;: &quot;zoom&quot;, &quot;resize&quot;: true, &quot;nav&quot;: false, &quot;border&quot;: 10, &quot;check-visible-state&quot;: false}"></div>
+
+</figure>
+<h3 data-number="10.5.3" id="inventory-schema-enforcement"><span class="header-section-number">10.5.3</span> Inventory schema enforcement</h3>
+<p>The inventory schema MUST enforce the relational model in <a href="#fig:inventory-erd" data-reference-type="ref" data-reference="fig:inventory-erd">15</a>: every certificate record anchors to exactly one endpoint, every certificate record has one or more deployment targets, and change records reference certificate records via an explicit junction (not flattened fields). Workflow rules block change closure until every linked certificate record has at least one deployment target and a populated <code>rollback_ref</code>. The detailed SharePoint List design (five lists: Endpoints, CertificateRecords, DeploymentTargets, ChangeRecords, ChangeRecordCertificateLink) is maintained in the operational specification.</p>
+<p>The operating model recommends non-exportable key custody (HSM/KMS/Vault) as the target state for production private keys. The schema still allows <code>key_custody=file_based</code> so teams can truthfully capture legacy storage patterns; any such record should be treated as a remediation trigger with a named owner, a migration plan, and a time-bound risk acceptance.</p>
+<h2 data-number="10.6" id="telemetry-and-alerting-hooks-early-detection"><span class="header-section-number">10.6</span> Telemetry and Alerting Hooks (Early Detection)</h2>
+<p>Expiry, chain incompatibility, truststore drift, and mis-issuance require continuous monitoring to emit machine-detectable signals. Certificate lifecycle telemetry is a first-class architectural concern.</p>
+<p><strong>Telemetry design goals:</strong></p>
+<ul>
+<li><p>Alerts must trigger while there is still time to plan a change (weeks or days), not at the moment of failure.</p></li>
+<li><p>Cequence (edge) and OKAPI (origin) are monitored independently; split custody must not create split blindness.</p></li>
+<li><p>Every alert must include <code>endpoint_fqdn</code> and map to the inventory <code>record_id</code> and <code>owner_team</code>.</p></li>
+<li><p>Where possible, prefer external (synthetic) verification of the served certificate over control-plane claims.</p></li>
+</ul>
+<div id="tab:telemetry-hooks">
+<table style="width:92%;">
+<caption>Minimum certificate lifecycle telemetry signals and alerting hooks.</caption>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 26%" />
+<col style="width: 18%" />
+<col style="width: 28%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Signal</strong></th>
+<th style="text-align: left;"><strong>Collection Method</strong></th>
+<th style="text-align: left;"><strong>Recommended Alert</strong></th>
+<th style="text-align: left;"><strong>Action / Owner</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Days to expiry (served leaf)</td>
+<td style="text-align: left;">Synthetic TLS handshake (SNI) extracts NotAfter</td>
+<td style="text-align: left;">Tiered alerts at 90/60/30/14/7 days</td>
+<td style="text-align: left;">Create/track renewal ticket; owner team from inventory</td>
+</tr>
+<tr>
+<td style="text-align: left;">Handshake failures</td>
+<td style="text-align: left;">Synthetic probe + edge logs (defender/gateway)</td>
+<td style="text-align: left;">Page on sustained failure above baseline</td>
+<td style="text-align: left;">Triage: SNI mismatch vs chain vs expiry; rollback if change in progress</td>
+</tr>
+<tr>
+<td style="text-align: left;">Chain lint failures</td>
+<td style="text-align: left;">Daily scan validates chain completeness + SHA-1 prohibition</td>
+<td style="text-align: left;">Ticket on any failure; page if production</td>
+<td style="text-align: left;">Repackage/replace chain; validate client runtimes (OpenSSL 3.x, JVM)</td>
+</tr>
+<tr>
+<td style="text-align: left;">AIA/CRL reachability</td>
+<td style="text-align: left;">Scheduled probe of AIA + CRL Distribution Point URLs extracted from served leaf (per endpoint)</td>
+<td style="text-align: left;">Ticket on any failure; page if widespread or production</td>
+<td style="text-align: left;">Investigate network/DNS/proxy blocks; update allowlists; assess impact on strict clients</td>
+</tr>
+<tr>
+<td style="text-align: left;">Truststore drift</td>
+<td style="text-align: left;">Scheduled snapshot hash + diff of runtime truststores</td>
+<td style="text-align: left;">Ticket when truststore changes outside approved window</td>
+<td style="text-align: left;">Review change source; run compatibility scan against issuers in inventory</td>
+</tr>
+<tr>
+<td style="text-align: left;">Mis-issuance indicators</td>
+<td style="text-align: left;">DCERTS issuance events sampled + certificate linting (SAN/EKU/key type)</td>
+<td style="text-align: left;">Ticket on any policy violation</td>
+<td style="text-align: left;">Contain: revoke/reissue as required; governance escalation</td>
+</tr>
+<tr>
+<td style="text-align: left;">Revocation/OCSP failures</td>
+<td style="text-align: left;">Synthetic OCSP stapling / OCSP query checks (where used)</td>
+<td style="text-align: left;">Ticket on persistent OCSP failures</td>
+<td style="text-align: left;">Decide policy: soft-fail vs hard-fail; adjust rollout/runbook</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>These signals can be implemented using the validation scripts in Appendix <a href="#app:scripts" data-reference-type="ref" data-reference="app:scripts">20</a> as probes (e.g., a scheduled <code>openssl s_client</code> check) and exported into the monitoring stack (Datadog/Prometheus) with a paging integration (PagerDuty). Alerts must reference inventory identifiers and have an on-call owner.</p>
+<p>The monitoring pipeline follows five stages: <strong>Observe</strong> (probes, DCERTS, defenders, inventory) <span class="math inline">\(\to\)</span> <strong>Ingest</strong> (OneSplunk) <span class="math inline">\(\to\)</span> <strong>Correlate</strong> by <span class="math inline">\(\mathcal{C}\)</span> (endpoint_fqdn, environment, certificate_role) <span class="math inline">\(\to\)</span> <strong>Decide</strong> (severity routing: Sev 1/2 <span class="math inline">\(\to\)</span> PagerDuty, Sev 3+ <span class="math inline">\(\to\)</span> Jira) <span class="math inline">\(\to\)</span> <strong>Notify</strong> and feed into the M1 Triage Machine.</p>
+<h3 data-number="10.6.1" id="splunk-integration-cequence-events"><span class="header-section-number">10.6.1</span> Splunk Integration (Cequence Events)</h3>
+<p>Cequence exports security events to OneSplunk via HEC. Index naming convention, HEC token configuration, and transport architecture are documented in the Splunk integration operational specification on Confluence.</p>
+<div class="confluence-warning-panel"><strong>Warning:</strong> HEC provides no event replay capability; events lost during Splunk outages cannot be recovered. Cequence UI retains up to 7 days of event history as a manual fallback.</div>
+<h2 data-number="10.7" id="cryptographic-baseline"><span class="header-section-number">10.7</span> Cryptographic Baseline</h2>
+<div id="tab:crypto-baseline">
+<table>
+<caption>Cryptographic and protocol baseline requirements.</caption>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Parameter</strong></th>
+<th style="text-align: left;"><strong>Requirement</strong></th>
+<th style="text-align: left;"><strong>Rationale</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">TLS versions</td>
+<td style="text-align: left;">TLS 1.2+</td>
+<td style="text-align: left;">TLS 1.0/1.1 deprecated</td>
+</tr>
+<tr>
+<td style="text-align: left;">RSA key size</td>
+<td style="text-align: left;">2048 bits minimum</td>
+<td style="text-align: left;">NIST SP 800-131A Rev. 2 (2048 acceptable; 3072+ preferred for new deployments)</td>
+</tr>
+<tr>
+<td style="text-align: left;">ECDSA curve</td>
+<td style="text-align: left;">P-256 (secp256r1)</td>
+<td style="text-align: left;">FIPS 186-4 approved</td>
+</tr>
+<tr>
+<td style="text-align: left;">Signature algorithm</td>
+<td style="text-align: left;">SHA-256/384/512</td>
+<td style="text-align: left;">SHA-1 prohibited</td>
+</tr>
+<tr>
+<td style="text-align: left;">Cipher suites (TLS 1.3, where enabled)</td>
+<td style="text-align: left;">AES_256_GCM, AES_128_GCM, CHACHA20</td>
+<td style="text-align: left;">AEAD required</td>
+</tr>
+<tr>
+<td style="text-align: left;">Cipher suites (TLS 1.2, where enabled)</td>
+<td style="text-align: left;">ECDHE-RSA/ECDSA-AES256-GCM-SHA384</td>
+<td style="text-align: left;">Forward secrecy required</td>
+</tr>
+<tr>
+<td style="text-align: left;">Certificate validity</td>
+<td style="text-align: left;">398 days max</td>
+<td style="text-align: left;">Apple/CA Browser Forum (2020); confirm DCERTS CA profile</td>
+</tr>
+<tr>
+<td style="text-align: left;">Renewal window</td>
+<td style="text-align: left;">30 days before expiry</td>
+<td style="text-align: left;">Align to change scheduling</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<script type="text/javascript" src="https://viewer.diagrams.net/js/viewer-static.min.js"></script>
+<script defer src="assets/download-injector.js"></script>
+</body>
+</html>

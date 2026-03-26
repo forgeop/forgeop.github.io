@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Security Architecture and Engineering L4 SecEng Team Telstra Group" />
+  <title>Certificate Lifecycle Operating Model</title>
+  
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+
+
+<title>Architecture and Trust Boundaries</title>
+<style>
+  :root { --text-primary: #1d1d1f; --text-secondary: #6e6e73; --text-link: #0066cc; --bg-primary: #fff; --bg-secondary: #f5f5f7; --bg-code: #f5f5f7; --border: #d2d2d7; --panel-info-bg: #e8f0fe; --panel-info-border: #4285f4; --panel-warn-bg: #fef7e0; --panel-warn-border: #f9ab00; --panel-error-bg: #fce8e6; --panel-error-border: #d93025; }
+  body { font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.52947; color: var(--text-primary); max-width: 980px; margin: 0 auto; padding: 0 22px; background: var(--bg-primary); -webkit-font-smoothing: antialiased; }
+  h1 { font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 28px; font-weight: 600; color: var(--text-primary); letter-spacing: .007em; line-height: 1.14286; margin: 40px 0 12px 0; }
+  h2 { font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 22px; font-weight: 600; color: var(--text-primary); letter-spacing: .016em; line-height: 1.18182; margin: 32px 0 8px 0; }
+  h3 { font-size: 17px; font-weight: 600; color: var(--text-primary); letter-spacing: -.022em; line-height: 1.23536; margin: 24px 0 6px 0; }
+  h4 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 16px 0 4px 0; }
+  p { margin: 8px 0; }
+  a { color: var(--text-link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 13px; }
+  th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--bg-secondary); font-weight: 600; color: var(--text-primary); }
+  tr:nth-child(even) { background: #fafafa; }
+  code { font-family: "SF Mono", SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace; font-size: 12px; background: var(--bg-code); padding: 2px 5px; border-radius: 4px; color: var(--text-primary); }
+  pre { background: var(--bg-code); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; overflow-x: auto; font-size: 12px; line-height: 1.6; }
+  pre code { background: none; padding: 0; }
+  figure { margin: 20px 0; text-align: center; }
+  figcaption { font-size: 12px; color: var(--text-secondary); margin-top: 8px; font-style: italic; line-height: 1.4; }
+  img { max-width: 100%; height: auto; border-radius: 4px; }
+  ul, ol { padding-left: 22px; margin: 8px 0; }
+  li { margin-bottom: 4px; }
+  blockquote { border-left: 3px solid var(--panel-info-border); background: var(--panel-info-bg); margin: 12px 0; padding: 12px 16px; border-radius: 0 4px 4px 0; }
+  #TOC { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 16px 22px; margin-bottom: 28px; }
+  #TOC ul { list-style: none; padding-left: 16px; }
+  #TOC > ul { padding-left: 0; }
+  #TOC a { color: var(--text-link); }
+  .header-section-number { color: var(--text-secondary); margin-right: 6px; }
+  .confluence-info-panel { border-left: 3px solid var(--panel-info-border); background: var(--panel-info-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  .confluence-warning-panel { border-left: 3px solid var(--panel-warn-border); background: var(--panel-warn-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  .confluence-error-panel { border-left: 3px solid var(--panel-error-border); background: var(--panel-error-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  nav { background: var(--bg-secondary); padding: 10px 16px; margin-bottom: 20px; border-bottom: 2px solid var(--panel-info-border); font-size: 13px; border-radius: 0; }
+  nav a { color: var(--text-link); font-weight: 500; }
+  strong { font-weight: 600; }
+  @media (max-width: 735px) { body { font-size: 14px; padding: 0 16px; } h1 { font-size: 24px; } h2 { font-size: 19px; } }
+</style>
+
+<style id="site-chrome-fix">body{padding-top:0!important}#site-header+nav,#site-header+*{margin-top:12px}</style>
+</head>
+<body>
+<nav>
+  <a href="00_parent_overview.html">^ Operating Model Home</a>
+   | <a href="01_control_system_framework.html">&lt; Control System Framework</a> | <a href="03_non_telstra_ca_custom_domains.html">Non-Telstra CA and Custom Domains &gt;</a>
+</nav>
+<h1 data-number="6" id="architecture-overview"><span class="header-section-number">6</span> Architecture Overview</h1>
+<h2 data-number="6.1" id="split-custody-tls-model"><span class="header-section-number">6.1</span> Split-Custody TLS Model</h2>
+<p>The Cequence deployment pattern creates a split custody model. Two independent certificate chains terminate TLS for the same customer-facing FQDN. <a href="#fig:split-custody-detailed" data-reference-type="ref" data-reference="fig:split-custody-detailed">6</a> illustrates the complete trust boundary architecture.</p>
+<figure id="fig:split-custody-detailed" data-latex-placement="H">
+<div class="mxgraph" style="max-width:100%;margin:16px 0;" data-mxgraph="{&quot;url&quot;: &quot;drawio/fig06_split_custody.drawio&quot;, &quot;toolbar&quot;: &quot;zoom&quot;, &quot;resize&quot;: true, &quot;nav&quot;: false, &quot;border&quot;: 10, &quot;check-visible-state&quot;: false}"></div>
+
+</figure>
+<figure id="fig:dfd-level1" data-latex-placement="H">
+<div class="mxgraph" style="max-width:100%;margin:16px 0;" data-mxgraph="{&quot;url&quot;: &quot;drawio/fig07_dfd_level1.drawio&quot;, &quot;toolbar&quot;: &quot;zoom&quot;, &quot;resize&quot;: true, &quot;nav&quot;: false, &quot;border&quot;: 10, &quot;check-visible-state&quot;: false}"></div>
+
+</figure>
+<p>The following engineering constraints govern certificate operations across both custody zones.</p>
+<ul>
+<li><p><strong>Renewal coordination:</strong> Cequence and OKAPI renewals for a given customer-facing FQDN should be planned as a single coordinated change (same release train, same change window). This reduces the probability of one-side-at-a-time certificate incidents.</p></li>
+<li><p><strong>Expiry alignment scope:</strong> Aligning issuance dates is not a cryptographic safety property and is neither necessary nor sufficient to prevent expiry-driven outages. The control objective is to ensure both certificates remain valid with adequate buffer and that each side has a tested renewal path. Expiry alignment serves only as a coordination heuristic for shared planning and must not be treated as a hard invariant.</p></li>
+<li><p><strong>Evidence requirement:</strong> For each endpoint_fqdn, both teams must record <code>valid_to</code> (NotAfter) for <code>server_edge</code> and <code>server_origin</code> certificates in the inventory and demonstrate (a) independent expiry alerting and (b) an agreed renewal_target that fits the shared change windows.</p></li>
+<li><p><strong>Termination mapping:</strong> For each in-scope <code>endpoint_fqdn</code>, maintain an evidence-based TLS termination map for both legs: consumer <span class="math inline">\(\rightarrow\)</span> defender and defender <span class="math inline">\(\rightarrow\)</span> upstream (including intermediate terminating components such as CDN/WAF/LB/managed gateways). If the upstream SaaS termination region or site is unknown (or non-AU), treat it as an unresolved constraint for that endpoint until verified and accepted.</p></li>
+<li><p><strong>Independent private keys:</strong> Private keys MUST NOT be shared between zones. Each team generates CSRs independently.</p></li>
+<li><p><strong>Chain consistency:</strong> Split custody does not permit enforcing identical issuance, but it can enforce chain compatibility. Define an approved CA profile set per environment (e.g., “Globally Trusted” for Internet-facing endpoints) and treat any deviation as an exception requiring (a) a documented consumer trust impact assessment, (b) evidence that major client truststores build to the chain (OpenSSL 3.x, JVM, iOS/Android), and (c) a remediation timeline. Both teams must record <code>issuer_ca</code> (root and intermediate identifiers) in the inventory and pass automated chain validation against a published trust bundle.</p></li>
+<li><p><strong>SNI validation:</strong> Defenders must validate SNI against the deployed certificate SAN set to prevent domain mismatch errors.</p></li>
+</ul>
+<h3 data-number="6.1.1" id="split-custody-automation-model"><span class="header-section-number">6.1.1</span> Split-Custody Automation Model</h3>
+<p>Each zone owns its private keys and can renew independently. ACME, operators, and Vault-based patterns remain viable, but only as two parallel automation domains (one per custody boundary) with a cross-boundary synchronisation layer that shares metadata, not keys.</p>
+<p><strong>Required properties:</strong></p>
+<ul>
+<li><p><strong>No cross-boundary key custody:</strong> a single Vault cluster may exist, but Cequence and OKAPI key material MUST be isolated by policy and namespace (separate mount paths/tenants, separate auth methods/roles, separate operators), and access MUST be non-transitive across the two operational teams.</p></li>
+<li><p><strong>Separate issuance identities:</strong> if ACME is used, each zone uses its own ACME account key and EAB credentials; compromise or revocation in one zone must not impact the other.</p></li>
+<li><p><strong>Shared source of truth for planning (metadata only):</strong> both zones publish <code>valid_to</code>, <code>issuer_ca</code>, and <code>serial</code> into the certificate inventory; the inventory becomes the synchronisation surface for renewal planning and incident response (not a place to store private keys).</p></li>
+<li><p><strong>Deterministic renewal handshake:</strong> renewals are coordinated via a single change record that references both cert records; each side must (a) renew and deploy independently, and (b) prove post-deploy validation (fingerprint/SNI checks) before the other side proceeds.</p></li>
+<li><p><strong>Failure isolation:</strong> automation failure in one zone (ACME outage, operator bug, Vault policy error) must not block the other zone from using the manual DCERTS workflow to renew.</p></li>
+</ul>
+<h3 data-number="6.1.2" id="sec:assertion-contract"><span class="header-section-number">6.1.2</span> Assertion contract (Cequence to OGW)</h3>
+<p>OGW cannot observe the client-facing TLS handshake (Section <a href="#sec:method-scope-sources" data-reference-type="ref" data-reference="sec:method-scope-sources">1</a>). Any session information OGW requires must be explicitly asserted by Cequence via a defined interface. This operating model adopts a <strong>minimal assertion contract</strong> (Decision A): Cequence asserts only what it can directly verify at its termination point; OGW consumes these assertions without independent handshake verification.</p>
+<div id="tab:assertion-contract">
+<table style="width:92%;">
+<caption>Cequence-to-OGW assertion contract (minimal contract, version 1.0).</caption>
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 42%" />
+<col style="width: 22%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Asserted attribute</strong></th>
+<th style="text-align: left;"><strong>Source (Cequence termination)</strong></th>
+<th style="text-align: left;"><strong>Evidence requirement</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>authenticated_principal</code></td>
+<td style="text-align: left;">Client identity verified at Cequence (mTLS client cert subject, API key, or OAuth token)</td>
+<td style="text-align: left;">Audit log entry linking request ID to principal extraction</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>tls_client_verified</code></td>
+<td style="text-align: left;">Boolean: client certificate was presented and validated against the configured trust bundle</td>
+<td style="text-align: left;">Probe output confirming mTLS enforcement (known-good/known-bad tests)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>request_id</code></td>
+<td style="text-align: left;">Unique identifier generated by Cequence for correlation</td>
+<td style="text-align: left;">Logging schema validation (request_id present in all log entries)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Explicit non-claims:</strong> OGW must not claim or log as directly observed: TLS version/cipher negotiated with the client, client certificate subject/issuer/serial/SAN (unless asserted by Cequence), full certificate chain contents, or any handshake-level attributes not forwarded by Cequence. Logging such attributes without receiving them via the assertion contract produces false audit evidence and creates compliance risk.</p>
+<p><strong>Contract versioning:</strong> The assertion contract is versioned (<code>assertion_contract_version</code> in the inventory schema). Changes to asserted attributes require coordinated rollout between Cequence Ops and OKAPI Ops. Version mismatch is a deployment-blocking condition (Invariant I9).</p>
+<p><strong>Degraded mode:</strong> If the assertion pipeline is unavailable (Cequence cannot forward attributes to OGW), behaviour is fail-closed: OGW rejects traffic that depends on asserted attributes. Fail-open is not permitted because OGW would operate without identity or session context, producing silent security degradation. Cequence logs assertion delivery failures as severity-1 events and triggers the emergency rotation runbook (Section <a href="#sec:emergency-rotation" data-reference-type="ref" data-reference="sec:emergency-rotation">13.2</a>) scoped to the affected endpoints. Restoration requires proof that assertions resume correctly (synthetic probe with known-good and known-bad inputs) before traffic is re-admitted.</p>
+<h2 data-number="6.2" id="certificate-trust-chain"><span class="header-section-number">6.2</span> Certificate Trust Chain</h2>
+<p><a href="#fig:trust-chain" data-reference-type="ref" data-reference="fig:trust-chain">8</a> illustrates the <em>target-state</em> certificate chain structure for Globally Trusted certificates issued via DCERTS using a modern SHA-256+ intermediate. Not all deployed endpoints currently present this clean chain; in practice, environments contain a mixture of modern and legacy chains (including SHA-1-signed intermediates).</p>
+<figure id="fig:trust-chain" data-latex-placement="H">
+<div class="mxgraph" style="max-width:100%;margin:16px 0;" data-mxgraph="{&quot;url&quot;: &quot;drawio/fig08_trust_chain.drawio&quot;, &quot;toolbar&quot;: &quot;zoom&quot;, &quot;resize&quot;: true, &quot;nav&quot;: false, &quot;border&quot;: 10, &quot;check-visible-state&quot;: false}"></div>
+
+</figure>
+<p><strong>Reconciling “clean DigiCert chain” vs “legacy SHA-1 reality”:</strong></p>
+<ul>
+<li><p><strong>Target-state:</strong> All customer-facing endpoints present a modern chain (SHA-256+), compatible with OpenSSL 3.x and modern JVMs.</p></li>
+<li><p><strong>Observed failure mode (possible):</strong> Some endpoints may still present legacy intermediates (including SHA-1 signatures) which can fail validation in strict client stacks. <strong>Prevalence is unknown</strong>; no quantified measurement exists.</p></li>
+<li><p><strong>What is missing today:</strong> A measured breakdown (% of endpoints) by issuer/intermediate/signature algorithm. Derive this from the certificate inventory and automated endpoint scans before making any risk quantification claim.</p></li>
+</ul>
+
+<script type="text/javascript" src="https://viewer.diagrams.net/js/viewer-static.min.js"></script>
+<script defer src="assets/download-injector.js"></script>
+</body>
+</html>

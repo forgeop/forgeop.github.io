@@ -1,0 +1,85 @@
+<mxfile host="app.diagrams.net" modified="2026-03-25" agent="Claude" version="24.0">
+  <diagram id="fig11" name="Fig 11 — K8s Certificate Components">
+    <mxGraphModel dx="620" dy="380" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="620" pageHeight="380" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- TOP BANNER -->
+        <mxCell id="banner1" value="&lt;b&gt;TARGET STATE &amp;mdash; not currently operational&lt;/b&gt;" style="rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#FFF4E5;strokeColor=#FF9500;strokeWidth=2;fontSize=13;html=1;whiteSpace=wrap;align=center;" vertex="1" parent="1">
+          <mxGeometry x="10" y="10" width="600" height="36" as="geometry"/>
+        </mxCell>
+
+        <!-- ROW 1 -->
+        <mxCell id="r1c1" value="&lt;b&gt;ClusterIssuer&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;(ACME or REST)&lt;/font&gt;" style="rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#EEEEFF;strokeColor=#5856D6;strokeWidth=1.5;html=1;whiteSpace=wrap;align=center;" vertex="1" parent="1">
+          <mxGeometry x="20" y="66" width="180" height="56" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="r1c2" value="&lt;b&gt;Certificate Resources&lt;/b&gt;" style="rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#E5F0FF;strokeColor=#007AFF;strokeWidth=1.5;html=1;whiteSpace=wrap;align=center;" vertex="1" parent="1">
+          <mxGeometry x="220" y="66" width="180" height="56" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="r1c3" value="&lt;b&gt;Kubernetes Secret&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;tls.crt / tls.key&lt;/font&gt;" style="rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#F3E5FA;strokeColor=#AF52DE;strokeWidth=1.5;html=1;whiteSpace=wrap;align=center;" vertex="1" parent="1">
+          <mxGeometry x="420" y="66" width="180" height="56" as="geometry"/>
+        </mxCell>
+
+        <!-- ROW 2 -->
+        <mxCell id="r2c1" value="&lt;b&gt;Secrets Control&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Vault / ASM&lt;/font&gt;" style="rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#F3E5FA;strokeColor=#AF52DE;strokeWidth=1.5;html=1;whiteSpace=wrap;align=center;" vertex="1" parent="1">
+          <mxGeometry x="20" y="150" width="180" height="56" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="r2c2" value="&lt;b&gt;DNS-01 Solver&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;RFC 2136&lt;/font&gt;" style="rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#E5F6FE;strokeColor=#5AC8FA;strokeWidth=1.5;html=1;whiteSpace=wrap;align=center;" vertex="1" parent="1">
+          <mxGeometry x="220" y="150" width="180" height="56" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="r2c3" value="&lt;b&gt;Authoritative DNS&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Nameserver&lt;/font&gt;" style="rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#E5F6FE;strokeColor=#5AC8FA;strokeWidth=1.5;html=1;whiteSpace=wrap;align=center;" vertex="1" parent="1">
+          <mxGeometry x="420" y="150" width="180" height="56" as="geometry"/>
+        </mxCell>
+
+        <!-- ROW 3 (centered) -->
+        <mxCell id="r3c1" value="&lt;b&gt;Ingress / Gateway&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Cequence Defender&lt;/font&gt;" style="rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#E5F0FF;strokeColor=#007AFF;strokeWidth=1.5;html=1;whiteSpace=wrap;align=center;" vertex="1" parent="1">
+          <mxGeometry x="220" y="234" width="180" height="56" as="geometry"/>
+        </mxCell>
+
+        <!-- ARROWS Row 1 flow -->
+        <mxCell id="a1" style="strokeColor=#C7C7CC;strokeWidth=1.5;endArrow=blockThin;endSize=6;rounded=1;arcSize=10;curved=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;html=1;" edge="1" source="r1c1" target="r1c2" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a2" style="strokeColor=#C7C7CC;strokeWidth=1.5;endArrow=blockThin;endSize=6;rounded=1;arcSize=10;curved=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;html=1;" edge="1" source="r1c2" target="r1c3" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Secrets Control feeds ClusterIssuer -->
+        <mxCell id="a3" style="strokeColor=#AF52DE;strokeWidth=1.5;dashed=1;endArrow=blockThin;endSize=6;rounded=1;arcSize=10;curved=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;html=1;" edge="1" source="r2c1" target="r1c1" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ClusterIssuer triggers DNS-01 Solver -->
+        <mxCell id="a4" style="strokeColor=#007AFF;strokeWidth=2;endArrow=blockThin;endSize=6;rounded=1;arcSize=10;curved=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;html=1;" edge="1" source="r1c1" target="r2c2" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- DNS-01 Solver to Auth DNS -->
+        <mxCell id="a5" style="strokeColor=#C7C7CC;strokeWidth=1.5;endArrow=blockThin;endSize=6;rounded=1;arcSize=10;curved=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;html=1;" edge="1" source="r2c2" target="r2c3" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- K8s Secret to Ingress -->
+        <mxCell id="a6" style="strokeColor=#007AFF;strokeWidth=2;endArrow=blockThin;endSize=6;rounded=1;arcSize=10;curved=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;html=1;" edge="1" source="r1c3" target="r3c1" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Secrets Control to K8s Secret -->
+        <mxCell id="a7" style="strokeColor=#AF52DE;strokeWidth=1.5;dashed=1;endArrow=blockThin;endSize=6;rounded=1;arcSize=10;curved=1;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;html=1;" edge="1" source="r2c1" target="r1c3" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- CUSTODY NOTE -->
+        <mxCell id="note1" value="&lt;i&gt;Secrets control plane holds EAB / TSIG keys; K8s Secrets are delivery-only caches&lt;/i&gt;" style="rounded=1;arcSize=18;shadow=0;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=6;spacingBottom=6;spacingLeft=14;spacingRight=14;fillColor=#F2F2F7;strokeColor=#D1D1D6;strokeWidth=1;fontSize=10;html=1;whiteSpace=wrap;align=center;" vertex="1" parent="1">
+          <mxGeometry x="60" y="316" width="500" height="30" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,55 @@
+<mxfile host="draw.io" modified="2026-03-25T00:00:00.000Z" agent="draw.io" version="24.0.0" type="device">
+  <diagram id="fig01" name="Operating Model at a Glance">
+    <mxGraphModel dx="750" dy="280" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="750" pageHeight="280" background="#FFFFFF">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- SecEng label -->
+        <mxCell id="seceng" value="&lt;b&gt;SecEng&lt;/b&gt;" style="rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#F2F2F7;strokeColor=#D1D1D6;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="150" width="90" height="36" as="geometry"/>
+        </mxCell>
+
+        <!-- Left Pillar: People / Ownership -->
+        <mxCell id="p1" value="&lt;b style=&quot;font-size:13px;&quot;&gt;People / Ownership&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#6E6E73;&quot;&gt;Cequence SaaS Ops vs OKAPI Ops&lt;br&gt;PKI Team approvals&lt;/span&gt;" style="rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#E5F0FF;strokeColor=#007AFF;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="20" width="200" height="110" as="geometry"/>
+        </mxCell>
+
+        <!-- Center Pillar: Process / Control Gates -->
+        <mxCell id="p2" value="&lt;b style=&quot;font-size:13px;&quot;&gt;Process / Control Gates&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#6E6E73;&quot;&gt;G1 (CSR lint) → G2 (ORR) → G3 (deploy)&lt;br&gt;Three-gate model&lt;/span&gt;" style="rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#FFF4E5;strokeColor=#FF9500;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="20" width="210" height="110" as="geometry"/>
+        </mxCell>
+
+        <!-- Right Pillar: Technology / Automation -->
+        <mxCell id="p3" value="&lt;b style=&quot;font-size:13px;&quot;&gt;Technology / Automation&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;span style=&quot;font-size:11px;color:#6E6E73;&quot;&gt;Manual DCERTS today&lt;br&gt;DCERTS REST API interim&lt;br&gt;ACME / cert-manager target&lt;/span&gt;" style="rounded=1;arcSize=18;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#EEEEFF;strokeColor=#5856D6;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="20" width="200" height="110" as="geometry"/>
+        </mxCell>
+
+        <!-- SecEng dashed arrow to People -->
+        <mxCell id="se1" value="coordinates" style="strokeColor=#C7C7CC;strokeWidth=1.5;rounded=1;arcSize=10;curved=1;endArrow=blockThin;endSize=6;edgeStyle=orthogonalEdgeStyle;fontColor=#86868B;fontSize=10;labelBackgroundColor=#FFFFFF;dashed=1;dashPattern=6 3;html=1;" edge="1" source="seceng" target="p1" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- SecEng dashed arrow to Process -->
+        <mxCell id="se2" value="coordinates" style="strokeColor=#C7C7CC;strokeWidth=1.5;rounded=1;arcSize=10;curved=1;endArrow=blockThin;endSize=6;edgeStyle=orthogonalEdgeStyle;fontColor=#86868B;fontSize=10;labelBackgroundColor=#FFFFFF;dashed=1;dashPattern=6 3;html=1;" edge="1" source="seceng" target="p2" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- SecEng dashed arrow to Technology -->
+        <mxCell id="se3" value="coordinates" style="strokeColor=#C7C7CC;strokeWidth=1.5;rounded=1;arcSize=10;curved=1;endArrow=blockThin;endSize=6;edgeStyle=orthogonalEdgeStyle;fontColor=#86868B;fontSize=10;labelBackgroundColor=#FFFFFF;dashed=1;dashPattern=6 3;html=1;" edge="1" source="seceng" target="p3" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Cross-pillar text -->
+        <mxCell id="txt1" value="Patterns / recommendations must map across all three pillars" style="text;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=Helvetica Neue;fontColor=#86868B;fontSize=10;fontStyle=2;html=1;" vertex="1" parent="1">
+          <mxGeometry x="175" y="195" width="400" height="20" as="geometry"/>
+        </mxCell>
+
+        <!-- Synchronisation surface pill -->
+        <mxCell id="sync" value="&lt;b style=&quot;font-size:13px;&quot;&gt;Synchronisation surface:&lt;/b&gt; &lt;span style=&quot;font-size:11px;color:#6E6E73;&quot;&gt;certificate inventory (metadata only; never keys)&lt;/span&gt;" style="rounded=1;arcSize=50;shadow=1;shadowColor=#2C2C3A;shadowOpacity=25;shadowOffsetX=0;shadowOffsetY=3;fontFamily=Helvetica Neue;fontColor=#1D1D1F;spacing=6;spacingTop=10;spacingBottom=10;spacingLeft=14;spacingRight=14;fillColor=#E5F6FE;strokeColor=#5AC8FA;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="225" width="550" height="40" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

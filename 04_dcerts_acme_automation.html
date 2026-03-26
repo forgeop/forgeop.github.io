@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Security Architecture and Engineering L4 SecEng Team Telstra Group" />
+  <title>Certificate Lifecycle Operating Model</title>
+  
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+
+
+<title>DCERTS, ACME and Automation</title>
+<style>
+  :root { --text-primary: #1d1d1f; --text-secondary: #6e6e73; --text-link: #0066cc; --bg-primary: #fff; --bg-secondary: #f5f5f7; --bg-code: #f5f5f7; --border: #d2d2d7; --panel-info-bg: #e8f0fe; --panel-info-border: #4285f4; --panel-warn-bg: #fef7e0; --panel-warn-border: #f9ab00; --panel-error-bg: #fce8e6; --panel-error-border: #d93025; }
+  body { font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.52947; color: var(--text-primary); max-width: 980px; margin: 0 auto; padding: 0 22px; background: var(--bg-primary); -webkit-font-smoothing: antialiased; }
+  h1 { font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 28px; font-weight: 600; color: var(--text-primary); letter-spacing: .007em; line-height: 1.14286; margin: 40px 0 12px 0; }
+  h2 { font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 22px; font-weight: 600; color: var(--text-primary); letter-spacing: .016em; line-height: 1.18182; margin: 32px 0 8px 0; }
+  h3 { font-size: 17px; font-weight: 600; color: var(--text-primary); letter-spacing: -.022em; line-height: 1.23536; margin: 24px 0 6px 0; }
+  h4 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 16px 0 4px 0; }
+  p { margin: 8px 0; }
+  a { color: var(--text-link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 13px; }
+  th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--bg-secondary); font-weight: 600; color: var(--text-primary); }
+  tr:nth-child(even) { background: #fafafa; }
+  code { font-family: "SF Mono", SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace; font-size: 12px; background: var(--bg-code); padding: 2px 5px; border-radius: 4px; color: var(--text-primary); }
+  pre { background: var(--bg-code); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; overflow-x: auto; font-size: 12px; line-height: 1.6; }
+  pre code { background: none; padding: 0; }
+  figure { margin: 20px 0; text-align: center; }
+  figcaption { font-size: 12px; color: var(--text-secondary); margin-top: 8px; font-style: italic; line-height: 1.4; }
+  img { max-width: 100%; height: auto; border-radius: 4px; }
+  ul, ol { padding-left: 22px; margin: 8px 0; }
+  li { margin-bottom: 4px; }
+  blockquote { border-left: 3px solid var(--panel-info-border); background: var(--panel-info-bg); margin: 12px 0; padding: 12px 16px; border-radius: 0 4px 4px 0; }
+  #TOC { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 16px 22px; margin-bottom: 28px; }
+  #TOC ul { list-style: none; padding-left: 16px; }
+  #TOC > ul { padding-left: 0; }
+  #TOC a { color: var(--text-link); }
+  .header-section-number { color: var(--text-secondary); margin-right: 6px; }
+  .confluence-info-panel { border-left: 3px solid var(--panel-info-border); background: var(--panel-info-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  .confluence-warning-panel { border-left: 3px solid var(--panel-warn-border); background: var(--panel-warn-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  .confluence-error-panel { border-left: 3px solid var(--panel-error-border); background: var(--panel-error-bg); padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 14px; }
+  nav { background: var(--bg-secondary); padding: 10px 16px; margin-bottom: 20px; border-bottom: 2px solid var(--panel-info-border); font-size: 13px; border-radius: 0; }
+  nav a { color: var(--text-link); font-weight: 500; }
+  strong { font-weight: 600; }
+  @media (max-width: 735px) { body { font-size: 14px; padding: 0 16px; } h1 { font-size: 24px; } h2 { font-size: 19px; } }
+</style>
+
+<style id="site-chrome-fix">body{padding-top:0!important}#site-header+nav,#site-header+*{margin-top:12px}</style>
+</head>
+<body>
+<nav>
+  <a href="00_parent_overview.html">^ Operating Model Home</a>
+   | <a href="03_non_telstra_ca_custom_domains.html">&lt; Non-Telstra CA and Custom Domains</a> | <a href="05_secrets_management.html">Secrets Management &gt;</a>
+</nav>
+<h1 data-number="8" id="dcerts-and-acme-integration"><span class="header-section-number">8</span> DCERTS and ACME Integration</h1>
+<div class="confluence-warning-panel"><strong>Warning:</strong> ACME automation is <strong>not currently operable in DCERTS (POC observed HTTP 500 during order creation on 13 May 2025). The near-term operating model therefore assumes manual DCERTS workflow and/or DCERTS REST API patterns.</strong></div>
+<figure id="fig:acme-flow-blocked" data-latex-placement="H">
+<div class="mxgraph" style="max-width:100%;margin:16px 0;" data-mxgraph="{&quot;url&quot;: &quot;drawio/fig09_acme_flow_blocked.drawio&quot;, &quot;toolbar&quot;: &quot;zoom&quot;, &quot;resize&quot;: true, &quot;nav&quot;: false, &quot;border&quot;: 10, &quot;check-visible-state&quot;: false}"></div>
+
+</figure>
+<p>Detailed cert-manager/ACME artefacts, DCERTS endpoint details, and secrets/network-flow diagrams may exist in Confluence or other internal tooling. For auditability, export these periodically as immutable snapshots (e.g., PDF) and store them with the evidence pack. Where vendor manuals or DCERTS API schemas justify a control or limitation, retain a dated copy alongside the evidence pack.</p>
+<p><strong>Readiness gates (before any implementation beyond lab use):</strong></p>
+<ul>
+<li><p>DCERTS ACME order creation succeeds consistently in non-prod (no HTTP 5xx) with a documented vendor fix.</p></li>
+<li><p>A single end-to-end non-production pilot has passed (DNS-01, issuance, renewal simulation, revocation/rollback) with evidence captured.</p></li>
+<li><p>Firewall burns / network flows are approved and monitored (to DCERTS ACME + RFC 2136 nameserver).</p></li>
+<li><p>Credential custody is approved (EAB + TSIG + ACME account key stored and rotated via an approved secrets platform).</p></li>
+<li><p>Support model is agreed: on-call ownership, incident runbook, and clear fallback to manual/DCERTS REST API.</p></li>
+</ul>
+<p><strong>Interim automation path (while ACME is blocked):</strong> Where renewal automation is needed today, use direct DCERTS REST API integration via a hybrid orchestration model. Power Automate handles email ingestion (native Outlook connector for DCERTS expiry notifications), then hands off via webhook to Rundeck (under evaluation) for orchestration. Rundeck pulls code from GitLab dynamically, providing version control, mandatory security scanning, and auditable execution. This hybrid preserves the same validation gates and evidence pack design, and provides a controlled migration path to cert-manager once DCERTS ACME stabilises. All automation code must reside in GitLab with mandatory pipeline scanning. Manual code paste into cloud UIs is prohibited.</p>
+<h2 data-number="8.1" id="sec:transitional-patterns"><span class="header-section-number">8.1</span> Transitional Patterns (REST Today <span class="math inline">\(\rightarrow\)</span> ACME Later)</h2>
+<p>The DCERTS ACME server is currently unavailable (HTTP 500 during <code>newOrder</code>/order creation). The operating model therefore includes transitional patterns that deliver immediate risk reduction via REST/manual workflows without creating a redesign cliff when ACME becomes available. The design treats ACME, REST, and portal as issuance transport differences behind the same control gates, secret delivery, and evidence/telemetry model.</p>
+<figure id="fig:dcerts-rest-flow" data-latex-placement="H">
+<div class="mxgraph" style="max-width:100%;margin:16px 0;" data-mxgraph="{&quot;url&quot;: &quot;drawio/fig10_dcerts_rest_api.drawio&quot;, &quot;toolbar&quot;: &quot;zoom&quot;, &quot;resize&quot;: true, &quot;nav&quot;: false, &quot;border&quot;: 10, &quot;check-visible-state&quot;: false}"></div>
+
+</figure>
+<h3 data-number="8.1.1" id="sec:controller-handoff"><span class="header-section-number">8.1.1</span> Controller Handoff Protocol</h3>
+<p>When a backend changes (e.g., REST/operator <span class="math inline">\(\rightarrow\)</span> ACME/cert-manager), only one controller may write the live TLS <code>Secret</code> at any time. The handoff protocol: (1) freeze renewals and record current fingerprint, (2) disable the old writer, (3) re-key under the new controller, (4) issue and lint via standard gates, (5) cutover to canary, (6) prove via SNI probe, (7) unfreeze and monitor. Rollback if fingerprint does not match. The three-gate model (G1/G2/G3) applies identically regardless of transport. The detailed step-by-step checklist is maintained in the operational runbooks.</p>
+<figure id="fig:k8s-cert-components" data-latex-placement="H">
+<div class="mxgraph" style="max-width:100%;margin:16px 0;" data-mxgraph="{&quot;url&quot;: &quot;drawio/fig11_k8s_cert_components.drawio&quot;, &quot;toolbar&quot;: &quot;zoom&quot;, &quot;resize&quot;: true, &quot;nav&quot;: false, &quot;border&quot;: 10, &quot;check-visible-state&quot;: false}"></div>
+
+</figure>
+<p><strong>KUDOS Platform (Ruled Out):</strong> The KUDOS auto-cert-operator was evaluated but is not applicable to Cequence. The operator writes exclusively to Kubernetes Secrets; Cequence is AWS SaaS without a Kubernetes runtime. The KUDOS team does not support external API consumption. Cequence certificate automation uses direct DCERTS REST API integration (Section <a href="#sec:transitional-patterns" data-reference-type="ref" data-reference="sec:transitional-patterns">8.1</a>) or the manual DCERTS portal workflow.</p>
+<h3 data-number="8.1.2" id="aws-saas-deployment-topology-cequence"><span class="header-section-number">8.1.2</span> AWS SaaS Deployment Topology (Cequence)</h3>
+<p>Cequence operates as an AWS SaaS service without a Kubernetes runtime. The diagram below shows the deployment topology for certificate management.</p>
+<figure id="fig:aws-saas-topology" data-latex-placement="H">
+<div class="mxgraph" style="max-width:100%;margin:16px 0;" data-mxgraph="{&quot;url&quot;: &quot;drawio/fig12_aws_saas_topology.drawio&quot;, &quot;toolbar&quot;: &quot;zoom&quot;, &quot;resize&quot;: true, &quot;nav&quot;: false, &quot;border&quot;: 10, &quot;check-visible-state&quot;: false}"></div>
+
+</figure>
+
+<script type="text/javascript" src="https://viewer.diagrams.net/js/viewer-static.min.js"></script>
+<script defer src="assets/download-injector.js"></script>
+</body>
+</html>
